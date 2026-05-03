@@ -36,6 +36,33 @@ function ProtectedRoute({ children, allowedRoles }) {
   return children;
 }
 
+function PublicRoute({ children }) {
+  const { currentUser, status } = useAuth();
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (currentUser) {
+    return (
+      <Navigate
+        to={
+          currentUser.role === "bidan"
+            ? ROUTES.BIDAN_DASHBOARD
+            : ROUTES.KADER_HOME
+        }
+        replace
+      />
+    );
+  }
+
+  return children;
+}
+
 export default function App() {
   const { currentUser, status } = useAuth();
 
@@ -59,11 +86,33 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+      <Route
+        path={ROUTES.LOGIN}
+        element={
+          <PublicRoute>
+            <LoginPage />
+          </PublicRoute>
+        }
+      />
 
-      {/* Protected routes */}
+      {/* <Route
+        path={ROUTES.KADER_HOME}
+        element={
+          <ProtectedRoute allowedRoles={["kader"]}>
+            <KaderHomePage />
+          </ProtectedRoute>
+        }
+      />
 
-      {/* Default redirects */}
+      <Route
+        path={ROUTES.BIDAN_DASHBOARD}
+        element={
+          <ProtectedRoute allowedRoles={["bidan"]}>
+            <BidanDashboard />
+          </ProtectedRoute>
+        }
+      /> */}
+
       <Route path="/" element={<Navigate to={getHomeRoute()} replace />} />
       <Route path="*" element={<Navigate to={getHomeRoute()} replace />} />
     </Routes>
