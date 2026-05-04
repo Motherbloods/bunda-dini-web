@@ -89,7 +89,7 @@ export default function EditPatientPage() {
       <Header title="Edit Biodata Pasien" backTo={-1} />
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="max-w-2xl space-y-6">
+        <div className="max-w-2xl mx-auto space-y-6">
           <div className="bg-white rounded-2xl border border-gray-100 p-6">
             <h3 className="font-bold text-gray-900 mb-4">Foto Pasien</h3>
             <div className="flex items-center gap-6">
