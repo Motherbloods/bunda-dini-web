@@ -38,7 +38,9 @@ export function AuthProvider({ children }) {
   const isKader = currentUser?.role === "kader";
 
   return (
-    <AuthContext.Provider value={{ currentUser, status, isBidan, isKader }}>
+    <AuthContext.Provider
+      value={{ currentUser, setCurrentUser, status, isBidan, isKader }}
+    >
       {children}
     </AuthContext.Provider>
   );
