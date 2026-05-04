@@ -26,7 +26,6 @@ const STATUS_CONFIG = {
   },
   // Status pasien
   aktif: { label: "Aktif", bg: "bg-success-light", text: "text-success" },
-  pindah: { label: "Pindah", bg: "bg-warning-light", text: "text-warning" },
   selesai: { label: "🎉 Selesai", bg: "bg-gray-100", text: "text-gray-500" },
   // Kader
   kader_aktif: { label: "Aktif", bg: "bg-success-light", text: "text-success" },

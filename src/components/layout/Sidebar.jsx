@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { logout } from "../../services/authService";
+import { useProfileModal } from "../../context/ProfileModalContext";
 import { ROUTES } from "../../constants/routes";
 import { ConfirmDialog } from "../ui/Modal";
 import clsx from "clsx";
@@ -31,6 +32,7 @@ const BIDAN_MENU = [
 
 export default function Sidebar() {
   const { currentUser, isBidan } = useAuth();
+  const { setOpen: openProfileModal } = useProfileModal();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -49,6 +51,11 @@ export default function Sidebar() {
     } finally {
       setLoggingOut(false);
     }
+  }
+
+  function handleOpenProfile(mobile = false) {
+    if (mobile) setMobileOpen(false);
+    openProfileModal(true);
   }
 
   const SidebarContent = ({ mobile = false }) => (
@@ -108,8 +115,15 @@ export default function Sidebar() {
       </nav>
 
       <div className="border-t border-gray-100 p-3">
-        {(!collapsed || mobile) && (
-          <div className="flex items-center gap-3 px-2 py-2 mb-2">
+        {/* User info / Profil Bidan trigger */}
+        {!collapsed || mobile ? (
+          <div
+            className={clsx(
+              "flex items-center gap-3 px-2 py-2 mb-2 rounded-xl transition-colors",
+              isBidan && "cursor-pointer hover:bg-gray-50",
+            )}
+            onClick={() => isBidan && handleOpenProfile(mobile)}
+          >
             <div className="w-8 h-8 bg-primary-pale rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-primary font-bold text-sm">
                 {currentUser?.nama?.[0]?.toUpperCase() ?? "U"}
@@ -123,8 +137,30 @@ export default function Sidebar() {
                 {currentUser?.role}
               </p>
             </div>
+            {isBidan && (
+              <ChevronRight
+                size={14}
+                className="text-gray-400 ml-auto flex-shrink-0"
+              />
+            )}
           </div>
+        ) : (
+          isBidan && (
+            <button
+              onClick={() => handleOpenProfile()}
+              title="Profil Bidan"
+              className="flex items-center justify-center w-full p-2 mb-1 rounded-xl hover:bg-gray-50 transition-colors"
+            >
+              <div className="w-8 h-8 bg-primary-pale rounded-full flex items-center justify-center">
+                <span className="text-primary font-bold text-sm">
+                  {currentUser?.nama?.[0]?.toUpperCase() ?? "U"}
+                </span>
+              </div>
+            </button>
+          )
         )}
+
+        {/* Logout */}
         <button
           onClick={() => setShowLogout(true)}
           className={clsx(
@@ -142,6 +178,7 @@ export default function Sidebar() {
 
   return (
     <>
+      {/* Mobile toggle button */}
       <button
         onClick={() => setMobileOpen(true)}
         className="md:hidden fixed top-4 left-4 z-40 p-2 bg-white rounded-xl shadow-md border border-gray-100
@@ -150,6 +187,7 @@ export default function Sidebar() {
         <Menu size={22} />
       </button>
 
+      {/* Mobile sidebar overlay */}
       {mobileOpen && (
         <div
           className="md:hidden fixed inset-0 z-50 bg-black/40"
@@ -164,6 +202,7 @@ export default function Sidebar() {
         </div>
       )}
 
+      {/* Desktop sidebar */}
       <aside
         className={clsx(
           "hidden md:flex h-screen bg-white border-r border-gray-100 flex-col transition-all duration-300 sticky top-0",
