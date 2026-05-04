@@ -61,8 +61,12 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="w-20 h-20 rounded-2xl bg-primary flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <Heart size={36} className="text-white" />
+            <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <img
+                src="/images/logo.jpg"
+                alt="Logo"
+                className="w-10 h-10 object-contain"
+              />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Bunda Dini
@@ -181,7 +185,7 @@ export default function LoginPage() {
             kesehatan ibu hamil secara real-time dengan sistem deteksi dini
             risiko kehamilan.
           </p>
-          <div className="grid grid-cols-3 gap-6 mt-12">
+          {/* <div className="grid grid-cols-3 gap-6 mt-12">
             <div className="text-center">
               <div className="text-4xl font-bold mb-2">100+</div>
               <div className="text-sm text-white/80">Ibu Terpantau</div>
@@ -194,7 +198,7 @@ export default function LoginPage() {
               <div className="text-4xl font-bold mb-2">500+</div>
               <div className="text-sm text-white/80">Pemeriksaan</div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -1,7 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
-  Heart,
   Users,
   UserCheck,
   LayoutDashboard,
@@ -61,8 +60,12 @@ export default function Sidebar() {
   const SidebarContent = ({ mobile = false }) => (
     <div className="flex flex-col h-full">
       <div className="flex items-center gap-3 px-4 py-5 border-b border-gray-100">
-        <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
-          <Heart size={20} className="text-white" />
+        <div className="w-9 h-9  rounded-xl flex items-center justify-center flex-shrink-0">
+          <img
+            src="/images/logo.jpg"
+            alt="Logo"
+            className="w-10 h-10 object-contain"
+          />
         </div>
         {(!collapsed || mobile) && (
           <div className="min-w-0">
@@ -97,6 +100,7 @@ export default function Sidebar() {
           <NavLink
             key={item.to}
             to={item.to}
+            end
             onClick={() => mobile && setMobileOpen(false)}
             className={({ isActive }) =>
               clsx(
@@ -115,7 +119,6 @@ export default function Sidebar() {
       </nav>
 
       <div className="border-t border-gray-100 p-3">
-        {/* User info / Profil Bidan trigger */}
         {!collapsed || mobile ? (
           <div
             className={clsx(
@@ -124,10 +127,12 @@ export default function Sidebar() {
             )}
             onClick={() => isBidan && handleOpenProfile(mobile)}
           >
-            <div className="w-8 h-8 bg-primary-pale rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-primary font-bold text-sm">
-                {currentUser?.nama?.[0]?.toUpperCase() ?? "U"}
-              </span>
+            <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+              <img
+                src="/images/user.png"
+                alt="User"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="min-w-0">
               <p className="text-sm font-semibold text-gray-900 truncate">
@@ -160,7 +165,6 @@ export default function Sidebar() {
           )
         )}
 
-        {/* Logout */}
         <button
           onClick={() => setShowLogout(true)}
           className={clsx(
@@ -178,7 +182,6 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile toggle button */}
       <button
         onClick={() => setMobileOpen(true)}
         className="md:hidden fixed top-4 left-4 z-40 p-2 bg-white rounded-xl shadow-md border border-gray-100
@@ -187,7 +190,6 @@ export default function Sidebar() {
         <Menu size={22} />
       </button>
 
-      {/* Mobile sidebar overlay */}
       {mobileOpen && (
         <div
           className="md:hidden fixed inset-0 z-50 bg-black/40"
@@ -202,7 +204,6 @@ export default function Sidebar() {
         </div>
       )}
 
-      {/* Desktop sidebar */}
       <aside
         className={clsx(
           "hidden md:flex h-screen bg-white border-r border-gray-100 flex-col transition-all duration-300 sticky top-0",
