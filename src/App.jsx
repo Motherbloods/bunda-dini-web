@@ -68,6 +68,22 @@ function PublicRoute({ children }) {
   return children;
 }
 
+function NotFoundPage() {
+  const navigate = useNavigate();
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-3">
+      <p className="text-6xl font-bold text-gray-200">404</p>
+      <p className="text-gray-500 text-sm">Halaman tidak ditemukan</p>
+      <button
+        onClick={() => navigate(-1)}
+        className="mt-2 px-4 py-2 text-sm bg-primary text-white rounded-xl hover:bg-primary-dark transition-colors"
+      >
+        ← Kembali
+      </button>
+    </div>
+  );
+}
+
 export default function App() {
   const { currentUser, status } = useAuth();
 
@@ -166,7 +182,7 @@ export default function App() {
       /> */}
 
       <Route path="/" element={<Navigate to={getHomeRoute()} replace />} />
-      <Route path="*" element={<Navigate to={getHomeRoute()} replace />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
