@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { X, ZoomIn } from "lucide-react";
 
 export default function PhotoViewer({ isOpen, onClose, imageUrl, nama }) {

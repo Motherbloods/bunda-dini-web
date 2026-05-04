@@ -1,9 +1,14 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { ROUTES } from "./constants/routes";
 
 // Auth
 import LoginPage from "./pages/auth/LoginPage";
+
+import KaderHomePage from "./pages/kader/KaderHomePage";
+import AddPatientPage from "./pages/kader/AddPatientPage";
+import PatientDetailPage from "./pages/kader/PatientDetailPage";
+import EditPatientPage from "./pages/kader/EditPatientPage";
 
 function ProtectedRoute({ children, allowedRoles }) {
   const { currentUser, status } = useAuth();
@@ -63,6 +68,22 @@ function PublicRoute({ children }) {
   return children;
 }
 
+function NotFoundPage() {
+  const navigate = useNavigate();
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-3">
+      <p className="text-6xl font-bold text-gray-200">404</p>
+      <p className="text-gray-500 text-sm">Halaman tidak ditemukan</p>
+      <button
+        onClick={() => navigate(-1)}
+        className="mt-2 px-4 py-2 text-sm bg-primary text-white rounded-xl hover:bg-primary-dark transition-colors"
+      >
+        ← Kembali
+      </button>
+    </div>
+  );
+}
+
 export default function App() {
   const { currentUser, status } = useAuth();
 
@@ -95,7 +116,7 @@ export default function App() {
         }
       />
 
-      {/* <Route
+      <Route
         path={ROUTES.KADER_HOME}
         element={
           <ProtectedRoute allowedRoles={["kader"]}>
@@ -105,6 +126,53 @@ export default function App() {
       />
 
       <Route
+        path={ROUTES.ADD_PATIENT}
+        element={
+          <ProtectedRoute allowedRoles={["kader"]}>
+            <AddPatientPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.PATIENT_DETAIL}
+        element={
+          <ProtectedRoute allowedRoles={["kader"]}>
+            <PatientDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.EDIT_PATIENT}
+        element={
+          <ProtectedRoute allowedRoles={["kader"]}>
+            <EditPatientPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.BIDAN_DASHBOARD}
+        element={
+          <ProtectedRoute allowedRoles={["bidan"]}>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-4">
+              <p className="text-gray-500 text-sm">
+                Bidan dashboard coming soon...
+              </p>
+              <button
+                onClick={() =>
+                  import("./firebase/config").then(({ auth }) => auth.signOut())
+                }
+                className="px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600"
+              >
+                Logout
+              </button>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* <Route
         path={ROUTES.BIDAN_DASHBOARD}
         element={
           <ProtectedRoute allowedRoles={["bidan"]}>
@@ -114,7 +182,7 @@ export default function App() {
       /> */}
 
       <Route path="/" element={<Navigate to={getHomeRoute()} replace />} />
-      <Route path="*" element={<Navigate to={getHomeRoute()} replace />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
