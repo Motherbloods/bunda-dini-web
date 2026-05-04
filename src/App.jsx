@@ -14,6 +14,13 @@ import ExaminationPage from "./pages/kader/examination/ExaminationPage";
 import ExaminationResultPage from "./pages/kader/examination/ExaminationResultPage";
 import ExaminationHistoryPage from "./pages/kader/examination/ExaminationHistoryPage";
 
+import BidanDashboardPage from "./pages/bidan/BidanDashboardPage";
+import KaderListPage from "./pages/bidan/KaderListPage";
+import AddKaderPage from "./pages/bidan/AddKaderPage";
+import AllPatientsPage from "./pages/bidan/AllPatientsPage";
+import PatientDetailBidanPage from "./pages/bidan/PatientDetailBidanPage";
+import ExportPage from "./pages/bidan/ExportPage";
+
 function ProtectedRoute({ children, allowedRoles }) {
   const { currentUser, status } = useAuth();
 
@@ -186,31 +193,55 @@ export default function App() {
         path={ROUTES.BIDAN_DASHBOARD}
         element={
           <ProtectedRoute allowedRoles={["bidan"]}>
-            <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 gap-4">
-              <p className="text-gray-500 text-sm">
-                Bidan dashboard coming soon...
-              </p>
-              <button
-                onClick={() =>
-                  import("./firebase/config").then(({ auth }) => auth.signOut())
-                }
-                className="px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600"
-              >
-                Logout
-              </button>
-            </div>
+            <BidanDashboardPage />
           </ProtectedRoute>
         }
       />
 
-      {/* <Route
-        path={ROUTES.BIDAN_DASHBOARD}
+      <Route
+        path={ROUTES.KADER_LIST}
         element={
           <ProtectedRoute allowedRoles={["bidan"]}>
-            <BidanDashboard />
+            <KaderListPage />
           </ProtectedRoute>
         }
-      /> */}
+      />
+
+      <Route
+        path={ROUTES.ADD_KADER}
+        element={
+          <ProtectedRoute allowedRoles={["bidan"]}>
+            <AddKaderPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.ALL_PATIENTS}
+        element={
+          <ProtectedRoute allowedRoles={["bidan"]}>
+            <AllPatientsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.PATIENT_DETAIL_BIDAN}
+        element={
+          <ProtectedRoute allowedRoles={["bidan"]}>
+            <PatientDetailBidanPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.EXPORT}
+        element={
+          <ProtectedRoute allowedRoles={["bidan"]}>
+            <ExportPage />
+          </ProtectedRoute>
+        }
+      />
 
       <Route path="/" element={<Navigate to={getHomeRoute()} replace />} />
       <Route path="*" element={<NotFoundPage />} />
