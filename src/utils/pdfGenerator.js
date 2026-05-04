@@ -17,14 +17,11 @@ export async function generatePdf({ exam, patient, bidanNama = "" }) {
   const hpht =
     patient?.hpht?.toDate?.() ??
     (patient?.hpht ? new Date(patient.hpht) : null);
-  const namaPusk = "Posyandu Bunda Dini";
 
   doc.setFillColor(...RED);
   doc.rect(0, 0, 210, 28, "F");
   doc.setTextColor(...WHITE);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
-  doc.text(namaPusk.toUpperCase(), 105, 11, { align: "center" });
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   doc.text("LAPORAN PEMERIKSAAN IBU HAMIL", 105, 18, { align: "center" });
@@ -175,7 +172,10 @@ export async function generatePdf({ exam, patient, bidanNama = "" }) {
   });
   y += (exam.rekomendasi?.length ?? 1) * 7 + 10;
 
-  if (y > 240) doc.addPage();
+  if (y > 240) {
+    doc.addPage();
+    y = 20;
+  }
   doc.setTextColor(...GREY);
   doc.setFontSize(9);
   doc.text("Diperiksa oleh:", 14, y);
