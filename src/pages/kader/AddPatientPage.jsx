@@ -19,7 +19,7 @@ export default function AddPatientPage() {
 
   const [fotoFile, setFotoFile] = useState(null);
   const [fotoPreview, setFotoPreview] = useState(null);
-  const [duplikat, setDuplikat] = useState(null); // pasien yang NIK-nya sama
+  const [duplikat, setDuplikat] = useState(null);
   const [checkingNik, setCheckingNik] = useState(false);
   const fileRef = useRef();
 
@@ -78,7 +78,6 @@ export default function AddPatientPage() {
       status: "aktif",
     };
 
-    // Cek duplikat NIK sekali lagi sebelum simpan
     const existing = await checkNik(patient.nik);
     if (existing) {
       setDuplikat(existing);
@@ -95,10 +94,12 @@ export default function AddPatientPage() {
 
   return (
     <PageLayout>
+      {/* Header tetap full width */}
       <Header title="Tambah Pasien Baru" backTo={-1} />
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="max-w-2xl space-y-6">
+        {/* mx-auto untuk centering */}
+        <div className="max-w-2xl mx-auto space-y-6">
           <div className="bg-white rounded-2xl border border-gray-100 p-6">
             <h3 className="font-bold text-gray-900 mb-4">
               Foto Pasien <span className="text-danger">*</span>
