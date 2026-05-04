@@ -17,6 +17,30 @@ import { db } from "../firebase/config";
 import { uploadFoto } from "../utils/cloudinary";
 import { v4 as uuidv4 } from "uuid";
 
+async function enrichKaderNama(patients) {
+  const missingIds = [
+    ...new Set(
+      patients.filter((p) => p.kaderId && !p.kaderNama).map((p) => p.kaderId),
+    ),
+  ];
+
+  if (missingIds.length === 0) return patients;
+
+  const kaderMap = {};
+  await Promise.all(
+    missingIds.map(async (id) => {
+      const snap = await getDoc(doc(db, "users", id));
+      if (snap.exists()) kaderMap[id] = snap.data().nama ?? "";
+    }),
+  );
+
+  return patients.map((p) =>
+    p.kaderId && !p.kaderNama
+      ? { ...p, kaderNama: kaderMap[p.kaderId] ?? "" }
+      : p,
+  );
+}
+
 // Fetch
 
 export async function fetchByKader(kaderId) {
@@ -37,7 +61,8 @@ export async function fetchByKaderAll(kaderId) {
     orderBy("nama"),
   );
   const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  const patients = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  return enrichKaderNama(patients);
 }
 
 export async function fetchAll(bidanId) {
@@ -47,13 +72,19 @@ export async function fetchAll(bidanId) {
     orderBy("nama"),
   );
   const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  const patients = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  return enrichKaderNama(patients);
 }
 
 export async function fetchById(patientId) {
   const snap = await getDoc(doc(db, "patients", patientId));
   if (!snap.exists()) return null;
-  return { id: snap.id, ...snap.data() };
+  const patient = { id: snap.id, ...snap.data() };
+  if (patient.kaderId && !patient.kaderNama) {
+    const kaderSnap = await getDoc(doc(db, "users", patient.kaderId));
+    if (kaderSnap.exists()) patient.kaderNama = kaderSnap.data().nama ?? "";
+  }
+  return patient;
 }
 
 export async function findByNik(nik) {
@@ -73,12 +104,12 @@ export async function findByNik(nik) {
 export async function createPatient(patient, fotoFile) {
   const id = uuidv4();
 
-  // Upload foto ke Cloudinary
   const fotoUrl = await uploadFoto(fotoFile, id);
 
-  // Ambil bidanId dari data kader
   const kaderSnap = await getDoc(doc(db, "users", patient.kaderId));
-  const bidanId = kaderSnap.data()?.createdBy ?? "";
+  const kaderData = kaderSnap.data() ?? {};
+  const bidanId = kaderData.createdBy ?? "";
+  const kaderNama = patient.kaderNama || kaderData.nama || "";
 
   const now = new Date();
   const data = {
@@ -86,14 +117,13 @@ export async function createPatient(patient, fotoFile) {
     id,
     fotoUrl,
     bidanId,
+    kaderNama,
     createdAt: now,
     updatedAt: now,
   };
 
   await setDoc(doc(db, "patients", id), data);
-
-  // Catat kader_history
-  await addKaderHistory(id, patient.kaderId, patient.kaderNama ?? "");
+  await addKaderHistory(id, patient.kaderId, kaderNama);
 
   return data;
 }
@@ -123,19 +153,19 @@ export async function transferKader({
   const now = new Date();
   const patRef = doc(db, "patients", patientId);
 
-  // Ambil bidanId kader baru
   const kaderSnap = await getDoc(doc(db, "users", newKaderId));
-  const newBidanId = kaderSnap.data()?.createdBy ?? "";
+  const kaderData = kaderSnap.data() ?? {};
+  const newBidanId = kaderData.createdBy ?? "";
+  const resolvedKaderNama = newKaderNama || kaderData.nama || "";
 
-  // Update pasien
   batch.update(patRef, {
     kaderId: newKaderId,
+    kaderNama: resolvedKaderNama,
     bidanId: newBidanId,
     status: "aktif",
     updatedAt: now,
   });
 
-  // Tutup history lama
   const histSnap = await getDocs(
     query(
       collection(db, "patients", patientId, "kader_history"),
@@ -146,14 +176,13 @@ export async function transferKader({
     batch.update(d.ref, { tanggalSelesai: now, alasanPindah: alasan ?? "" });
   });
 
-  // Buat history baru
   const newHistRef = doc(
     collection(db, "patients", patientId, "kader_history"),
   );
   batch.set(newHistRef, {
     id: newHistRef.id,
     kaderId: newKaderId,
-    kaderNama: newKaderNama,
+    kaderNama: resolvedKaderNama,
     tanggalMulai: now,
     tanggalSelesai: null,
     alasanPindah: "",

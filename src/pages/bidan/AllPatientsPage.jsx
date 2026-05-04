@@ -168,7 +168,7 @@ export default function AllPatientsPage() {
                       <Badge status={p.status} />
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-500">
-                      {p.kaderId}
+                      {p.kaderNama}
                     </td>
                     <td className="px-4 py-3 text-gray-400">
                       <span className="text-xs hover:text-primary">›</span>
