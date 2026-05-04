@@ -49,24 +49,39 @@ export function StatCard({
       text: "text-warning",
       icon: "text-warning",
     },
-    danger: { bg: "bg-danger-light", text: "text-danger", icon: "text-danger" },
-    info: { bg: "bg-info-light", text: "text-info", icon: "text-info" },
+    danger: {
+      bg: "bg-danger-light",
+      text: "text-danger",
+      icon: "text-danger",
+    },
+    info: {
+      bg: "bg-info-light",
+      text: "text-info",
+      icon: "text-info",
+    },
   };
+
   const c = colorMap[color];
 
   return (
     <Card className="p-5">
       <div className="flex items-center gap-4">
-        <div className={clsx("p-3 rounded-xl", c.bg)}>
+        <div className={clsx("p-3 rounded-xl flex-shrink-0", c.bg)}>
           <Icon size={24} className={c.icon} />
         </div>
-        <div>
+
+        <div className="min-w-0 flex-1">
           {loading ? (
             <div className="h-7 w-16 bg-gray-200 rounded animate-pulse mb-1" />
           ) : (
-            <p className={clsx("text-2xl font-bold", c.text)}>{value}</p>
+            <p className={clsx("text-2xl font-bold truncate", c.text)}>
+              {value}
+            </p>
           )}
-          <p className="text-xs text-gray-500 leading-tight">{label}</p>
+
+          <p className="text-xs text-gray-500 leading-tight line-clamp-2">
+            {label}
+          </p>
         </div>
       </div>
     </Card>

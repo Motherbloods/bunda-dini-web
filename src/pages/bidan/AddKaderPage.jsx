@@ -51,7 +51,7 @@ export default function AddKaderPage() {
     <PageLayout>
       <Header title="Tambah Kader" backTo={-1} />
 
-      <div className="max-w-lg space-y-5">
+      <div className="max-w-lg mx-auto space-y-5">
         <div className="bg-info-light border border-blue-200 rounded-xl p-4 flex gap-3">
           <Info size={20} className="text-info flex-shrink-0 mt-0.5" />
           <p className="text-sm text-info">

@@ -106,7 +106,7 @@ export default function AllPatientsPage() {
           }
         />
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-gray-100 overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-primary-pale border-b border-primary/10">
