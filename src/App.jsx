@@ -10,6 +10,10 @@ import AddPatientPage from "./pages/kader/AddPatientPage";
 import PatientDetailPage from "./pages/kader/PatientDetailPage";
 import EditPatientPage from "./pages/kader/EditPatientPage";
 
+import ExaminationPage from "./pages/kader/examination/ExaminationPage";
+import ExaminationResultPage from "./pages/kader/examination/ExaminationResultPage";
+import ExaminationHistoryPage from "./pages/kader/examination/ExaminationHistoryPage";
+
 function ProtectedRoute({ children, allowedRoles }) {
   const { currentUser, status } = useAuth();
 
@@ -147,6 +151,33 @@ export default function App() {
         element={
           <ProtectedRoute allowedRoles={["kader"]}>
             <EditPatientPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.EXAMINE}
+        element={
+          <ProtectedRoute allowedRoles={["kader"]}>
+            <ExaminationPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.EXAM_HISTORY}
+        element={
+          <ProtectedRoute allowedRoles={["kader"]}>
+            <ExaminationHistoryPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.EXAM_RESULT}
+        element={
+          <ProtectedRoute allowedRoles={["kader", "bidan"]}>
+            <ExaminationResultPage />
           </ProtectedRoute>
         }
       />
