@@ -5,7 +5,6 @@ import {
   Users,
   UserCheck,
   LayoutDashboard,
-  ClipboardList,
   Download,
   LogOut,
   Menu,
@@ -34,6 +33,7 @@ export default function Sidebar() {
   const { currentUser, isBidan } = useAuth();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
@@ -51,90 +51,126 @@ export default function Sidebar() {
     }
   }
 
-  return (
-    <>
-      <aside
-        className={clsx(
-          "h-screen bg-white border-r border-gray-100 flex flex-col transition-all duration-300 sticky top-0",
-          collapsed ? "w-16" : "w-64",
-        )}
-      >
-        {/* Logo */}
-        <div className="flex items-center gap-3 px-4 py-5 border-b border-gray-100">
-          <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
-            <Heart size={20} className="text-white" />
+  const SidebarContent = ({ mobile = false }) => (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-3 px-4 py-5 border-b border-gray-100">
+        <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
+          <Heart size={20} className="text-white" />
+        </div>
+        {(!collapsed || mobile) && (
+          <div className="min-w-0">
+            <p className="font-bold text-gray-900 text-sm leading-tight">
+              Bunda Dini
+            </p>
+            <p className="text-xs text-gray-400 truncate">
+              {isBidan ? "Dashboard Bidan" : "Dashboard Kader"}
+            </p>
           </div>
-          {!collapsed && (
-            <div className="min-w-0">
-              <p className="font-bold text-gray-900 text-sm leading-tight">
-                Bunda Dini
-              </p>
-              <p className="text-xs text-gray-400 truncate">
-                {isBidan ? "Dashboard Bidan" : "Dashboard Kader"}
-              </p>
-            </div>
-          )}
+        )}
+        {!mobile && (
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="ml-auto text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
           >
             {collapsed ? <ChevronRight size={18} /> : <Menu size={18} />}
           </button>
-        </div>
-
-        {/* Nav */}
-        <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
-          {menus.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) =>
-                clsx(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
-                  isActive
-                    ? "bg-primary-pale text-primary"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                  collapsed && "justify-center",
-                )
-              }
-            >
-              <item.icon size={20} className="flex-shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
-            </NavLink>
-          ))}
-        </nav>
-
-        {/* User + Logout */}
-        <div className="border-t border-gray-100 p-3">
-          {!collapsed && (
-            <div className="flex items-center gap-3 px-2 py-2 mb-2">
-              <div className="w-8 h-8 bg-primary-pale rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-primary font-bold text-sm">
-                  {currentUser?.nama?.[0]?.toUpperCase() ?? "U"}
-                </span>
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">
-                  {currentUser?.nama ?? "-"}
-                </p>
-                <p className="text-xs text-gray-400 capitalize">
-                  {currentUser?.role}
-                </p>
-              </div>
-            </div>
-          )}
+        )}
+        {mobile && (
           <button
-            onClick={() => setShowLogout(true)}
-            className={clsx(
-              "flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium",
-              "text-gray-500 hover:bg-red-50 hover:text-danger transition-colors",
-              collapsed && "justify-center",
-            )}
+            onClick={() => setMobileOpen(false)}
+            className="ml-auto text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <LogOut size={18} className="flex-shrink-0" />
-            {!collapsed && <span>Keluar</span>}
+            <X size={20} />
           </button>
+        )}
+      </div>
+
+      <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+        {menus.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            onClick={() => mobile && setMobileOpen(false)}
+            className={({ isActive }) =>
+              clsx(
+                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
+                isActive
+                  ? "bg-primary-pale text-primary"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                collapsed && !mobile && "justify-center",
+              )
+            }
+          >
+            <item.icon size={20} className="flex-shrink-0" />
+            {(!collapsed || mobile) && <span>{item.label}</span>}
+          </NavLink>
+        ))}
+      </nav>
+
+      <div className="border-t border-gray-100 p-3">
+        {(!collapsed || mobile) && (
+          <div className="flex items-center gap-3 px-2 py-2 mb-2">
+            <div className="w-8 h-8 bg-primary-pale rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-primary font-bold text-sm">
+                {currentUser?.nama?.[0]?.toUpperCase() ?? "U"}
+              </span>
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-gray-900 truncate">
+                {currentUser?.nama ?? "-"}
+              </p>
+              <p className="text-xs text-gray-400 capitalize">
+                {currentUser?.role}
+              </p>
+            </div>
+          </div>
+        )}
+        <button
+          onClick={() => setShowLogout(true)}
+          className={clsx(
+            "flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium",
+            "text-gray-500 hover:bg-red-50 hover:text-danger transition-colors",
+            collapsed && !mobile && "justify-center",
+          )}
+        >
+          <LogOut size={18} className="flex-shrink-0" />
+          {(!collapsed || mobile) && <span>Keluar</span>}
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="md:hidden fixed top-4 left-4 z-40 p-2 bg-white rounded-xl shadow-md border border-gray-100
+                   text-gray-600 hover:text-gray-900 transition-colors"
+      >
+        <Menu size={22} />
+      </button>
+
+      {mobileOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-50 bg-black/40"
+          onClick={() => setMobileOpen(false)}
+        >
+          <aside
+            className="absolute inset-0 bg-white flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <SidebarContent mobile />
+          </aside>
         </div>
+      )}
+
+      <aside
+        className={clsx(
+          "hidden md:flex h-screen bg-white border-r border-gray-100 flex-col transition-all duration-300 sticky top-0",
+          collapsed ? "w-16" : "w-64",
+        )}
+      >
+        <SidebarContent />
       </aside>
 
       <ConfirmDialog
