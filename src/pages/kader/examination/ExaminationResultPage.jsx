@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FileDown, Home } from "lucide-react";
+import { FileDown } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
-import { fetchById } from "../../../services/examinationService";
-import { fetchById as fetchPatient } from "../../../services/patientService";
+import { useExaminations } from "../../../hooks/useExaminations";
+import { usePatients } from "../../../hooks/usePatients";
 import PageLayout from "../../../components/layout/PageLayout";
 import Header from "../../../components/layout/Header";
 import Card, { SectionHeader } from "../../../components/ui/Card";
 import Badge, { LilaBadge } from "../../../components/ui/Badge";
 import { InlineLoader } from "../../../components/ui/LoadingSpinner";
-import { toDisplayWithDay, toDisplay } from "../../../utils/dateFormatter";
+import { toDisplayWithDay } from "../../../utils/dateFormatter";
 import { kategoriBmi } from "../../../utils/ruleEngine";
 import { generatePdf } from "../../../utils/pdfGenerator";
 import { ROUTES } from "../../../constants/routes";
+import toast from "react-hot-toast";
 
 export default function ExaminationResultPage() {
   const { examId } = useParams();
   const navigate = useNavigate();
   const { currentUser, isBidan } = useAuth();
+  const { fetchByIdSecure } = useExaminations();
+  const { loadById } = usePatients();
   const [exam, setExam] = useState(null);
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,16 +28,28 @@ export default function ExaminationResultPage() {
 
   useEffect(() => {
     async function load() {
-      const e = await fetchById(examId);
-      setExam(e);
-      if (e) {
-        const p = await fetchPatient(e.patientId);
-        setPatient(p);
+      try {
+        const examData = await fetchByIdSecure(examId, currentUser);
+        setExam(examData);
+
+        const patientData = await loadById(examData.patientId);
+        setPatient(patientData);
+      } catch (error) {
+        const isAccessDenied = error.message?.includes("Akses ditolak");
+
+        toast.error(
+          isAccessDenied
+            ? "Anda tidak memiliki akses ke data ini."
+            : "Gagal memuat data pemeriksaan.",
+        );
+
+        navigate(ROUTES.KADER_HOME, { replace: true });
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     load();
-  }, [examId]);
+  }, [examId, currentUser, fetchByIdSecure, loadById, navigate]);
 
   async function handlePrint() {
     if (!exam || !patient) return;
@@ -42,29 +57,31 @@ export default function ExaminationResultPage() {
     try {
       await generatePdf({ exam, patient, bidanNama: currentUser?.nama ?? "" });
     } catch (e) {
-      alert("Gagal generate PDF: " + e.message);
+      toast.error("Gagal generate PDF: " + e.message);
     } finally {
       setPrinting(false);
     }
   }
 
-  if (loading)
+  if (loading) {
     return (
       <PageLayout>
         <InlineLoader />
       </PageLayout>
     );
-  if (!exam)
+  }
+
+  if (!exam || !patient) {
     return (
       <PageLayout>
         <p className="text-gray-500">Data tidak ditemukan.</p>
       </PageLayout>
     );
+  }
 
   const tanggal =
     exam.tanggal?.toDate?.() ?? new Date(exam.tanggal?.seconds * 1000);
   const isRisikoTinggi = exam.statusIbu === "risiko_tinggi";
-  const isKaderRole = !isBidan;
 
   return (
     <PageLayout>

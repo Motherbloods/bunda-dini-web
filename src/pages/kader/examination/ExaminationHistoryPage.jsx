@@ -12,7 +12,8 @@ import {
   ReferenceLine,
 } from "recharts";
 import { useExaminations } from "../../../hooks/useExaminations";
-import { fetchById as getPatient } from "../../../services/patientService";
+import { usePatients } from "../../../hooks/usePatients";
+import { useAuth } from "../../../context/AuthContext";
 import PageLayout from "../../../components/layout/PageLayout";
 import Header from "../../../components/layout/Header";
 import Card, { SectionHeader } from "../../../components/ui/Card";
@@ -22,20 +23,51 @@ import EmptyState from "../../../components/ui/EmptyState";
 import { toDisplay, toShort } from "../../../utils/dateFormatter";
 import { BarChart2 } from "lucide-react";
 import { buildPath } from "../../../constants/routes";
+import { ROUTES } from "../../../constants/routes";
+import toast from "react-hot-toast";
 
 const CHART_TABS = ["Berat Badan", "Tekanan Darah", "DJJ"];
 
 export default function ExaminationHistoryPage() {
   const { patientId } = useParams();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const { loadHistory, history, loading } = useExaminations();
+  const { loadById } = usePatients();
   const [patient, setPatient] = useState(null);
   const [activeChart, setActiveChart] = useState(0);
 
   useEffect(() => {
-    loadHistory(patientId);
-    getPatient(patientId).then(setPatient);
-  }, [patientId]);
+    const fetchData = async () => {
+      try {
+        const patientData = await loadById(patientId);
+        if (!patientData) {
+          navigate(ROUTES.KADER_HOME, { replace: true });
+          return;
+        }
+        setPatient(patientData);
+
+        await loadHistory(patientId);
+      } catch (error) {
+        const isAccessDenied = error.message?.includes("Akses ditolak");
+        console.error(
+          "Error loading examination history:",
+          error,
+          "ini adalah iscase",
+          isAccessDenied,
+        );
+        toast.error(
+          isAccessDenied
+            ? "Anda tidak memiliki akses ke data ini."
+            : "Gagal memuat data.",
+        );
+
+        navigate(ROUTES.KADER_HOME, { replace: true });
+      }
+    };
+
+    fetchData();
+  }, [patientId, loadById, loadHistory, navigate, currentUser]);
 
   // Siapkan data grafik (urut lama → baru)
   const chartData = [...history].reverse().map((e) => {
@@ -49,16 +81,19 @@ export default function ExaminationHistoryPage() {
     };
   });
 
+  if (loading || !patient) {
+    return (
+      <PageLayout>
+        <InlineLoader />
+      </PageLayout>
+    );
+  }
+
   return (
     <PageLayout>
-      <Header
-        title={`Riwayat${patient ? ` — ${patient.nama}` : ""}`}
-        backTo={-1}
-      />
+      <Header title={`Riwayat — ${patient.nama}`} backTo={-1} />
 
-      {loading ? (
-        <InlineLoader />
-      ) : history.length === 0 ? (
+      {history.length === 0 ? (
         <EmptyState
           icon={BarChart2}
           title="Belum ada riwayat pemeriksaan"

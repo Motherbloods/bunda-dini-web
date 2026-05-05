@@ -12,6 +12,8 @@ import { usiaKehamilanMinggu } from "../../../utils/dateFormatter";
 import StepTensi from "./StepTensi";
 import StepAntropometri from "./StepAntropometri";
 import StepDjj from "./StepDjj";
+import { ROUTES } from "../../../constants/routes";
+import toast from "react-hot-toast";
 
 const STEPS = ["Tekanan Darah", "Antropometri", "DJJ & Keluhan"];
 
@@ -45,9 +47,30 @@ export default function ExaminationPage() {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    loadById(patientId);
-    loadRules();
-  }, [patientId]);
+    const fetchData = async () => {
+      try {
+        const result = await loadById(patientId);
+
+        if (!result) {
+          navigate(ROUTES.KADER_HOME, { replace: true });
+        }
+
+        await loadRules();
+      } catch (error) {
+        const isAccessDenied = error.message?.includes("Akses ditolak");
+
+        toast.error(
+          isAccessDenied
+            ? "Anda tidak memiliki akses ke pasien ini."
+            : "Gagal memuat data pasien.",
+        );
+
+        navigate(ROUTES.KADER_HOME, { replace: true });
+      }
+    };
+
+    fetchData();
+  }, [patientId, loadById, loadRules, navigate]);
 
   const update = useCallback((field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
