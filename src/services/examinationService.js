@@ -72,3 +72,26 @@ export async function save(exam) {
   await setDoc(doc(db, "examinations", id), withId);
   return withId;
 }
+
+export async function fetchByIdSecure(examId, caller) {
+  const exam = await fetchById(examId);
+
+  if (!exam) throw new Error("Data pemeriksaan tidak ditemukan.");
+
+  // Cek apakah user punya akses ke pasien ini
+  const patient = await getDoc(doc(db, "patients", exam.patientId));
+  if (!patient.exists()) throw new Error("Data pasien tidak ditemukan.");
+
+  const patientData = patient.data();
+
+  // Validasi akses berdasarkan role
+  if (caller.role === "kader" && patientData.kaderId !== caller.id) {
+    throw new Error("Akses ditolak.");
+  }
+
+  if (caller.role === "bidan" && patientData.bidanId !== caller.id) {
+    throw new Error("Akses ditolak.");
+  }
+
+  return exam;
+}
