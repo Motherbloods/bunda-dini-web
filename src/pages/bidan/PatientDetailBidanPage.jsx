@@ -15,7 +15,8 @@ import {
   usiaKehamilanMinggu,
   taksiranPersalinan,
 } from "../../utils/dateFormatter";
-import { buildPath } from "../../constants/routes";
+import { buildPath, ROUTES } from "../../constants/routes";
+import toast from "react-hot-toast";
 
 export default function PatientDetailBidanPage() {
   const { patientId } = useParams();
@@ -24,9 +25,33 @@ export default function PatientDetailBidanPage() {
   const { loadHistory, history, loading: examLoading } = useExaminations();
 
   useEffect(() => {
-    loadById(patientId);
-    loadHistory(patientId);
-  }, [patientId]);
+    const fetchData = async () => {
+      try {
+        const result = await loadById(patientId);
+
+        // kalau data tidak ditemukan
+        if (!result) {
+          navigate(ROUTES.BIDAN_DASHBOARD, { replace: true });
+          return;
+        }
+
+        // load history setelah patient berhasil
+        await loadHistory(patientId);
+      } catch (error) {
+        const isAccessDenied = error.message?.includes("Akses ditolak");
+
+        toast.error(
+          isAccessDenied
+            ? "Anda tidak memiliki akses ke pasien ini."
+            : "Gagal memuat data pasien.",
+        );
+
+        navigate(ROUTES.BIDAN_DASHBOARD, { replace: true });
+      }
+    };
+
+    fetchData();
+  }, [patientId, loadById, loadHistory, navigate]);
 
   if (loading || !patient)
     return (

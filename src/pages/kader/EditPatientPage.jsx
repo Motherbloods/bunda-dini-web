@@ -10,6 +10,8 @@ import { BlockButton } from "../../components/ui/Button";
 import { InlineLoader } from "../../components/ui/LoadingSpinner";
 import { usiaKehamilanMinggu, toDisplay } from "../../utils/dateFormatter";
 import * as V from "../../utils/validators";
+import toast from "react-hot-toast";
+import { ROUTES } from "../../constants/routes";
 
 export default function EditPatientPage() {
   const { patientId } = useParams();
@@ -29,8 +31,28 @@ export default function EditPatientPage() {
   const hphtValue = watch("hpht");
 
   useEffect(() => {
-    loadById(patientId);
-  }, [patientId]);
+    const fetchData = async () => {
+      try {
+        const result = await loadById(patientId);
+
+        if (!result) {
+          navigate(ROUTES.KADER_HOME, { replace: true });
+        }
+      } catch (error) {
+        const isAccessDenied = error.message?.includes("Akses ditolak");
+
+        toast.error(
+          isAccessDenied
+            ? "Anda tidak memiliki akses ke pasien ini."
+            : "Gagal memuat data pasien.",
+        );
+
+        navigate(ROUTES.KADER_HOME, { replace: true });
+      }
+    };
+
+    fetchData();
+  }, [patientId, loadById, navigate]);
 
   useEffect(() => {
     if (!patient) return;
