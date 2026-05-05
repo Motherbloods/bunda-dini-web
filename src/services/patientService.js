@@ -220,3 +220,19 @@ async function addKaderHistory(patientId, kaderId, kaderNama) {
     alasanPindah: "",
   });
 }
+
+export async function fetchByIdSecure(patientId, caller) {
+  const patient = await fetchById(patientId);
+
+  if (!patient) throw new Error("Pasien tidak ditemukan.");
+
+  if (caller.role === "kader" && patient.kaderId !== caller.id) {
+    throw new Error("Akses ditolak.");
+  }
+
+  if (caller.role === "bidan" && patient.bidanId !== caller.id) {
+    throw new Error("Akses ditolak.");
+  }
+
+  return patient;
+}
