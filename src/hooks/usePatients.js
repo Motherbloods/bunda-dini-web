@@ -1,8 +1,10 @@
 import { useState, useCallback } from "react";
 import * as svc from "../services/patientService";
+import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
 export function usePatients() {
+  const { currentUser } = useAuth();
   const [patients, setPatients] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -31,18 +33,21 @@ export function usePatients() {
     }
   }, []);
 
-  const loadById = useCallback(async (patientId) => {
-    setLoading(true);
-    try {
-      const data = await svc.fetchById(patientId);
-      setSelected(data);
-      return data;
-    } catch {
-      toast.error("Gagal memuat data pasien.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const loadById = useCallback(
+    async (patientId) => {
+      setLoading(true);
+      try {
+        const data = await svc.fetchByIdSecure(patientId, currentUser);
+        setSelected(data);
+        return data;
+      } catch (e) {
+        throw new Error(e);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [currentUser],
+  );
 
   const checkNik = useCallback((nik) => svc.findByNik(nik), []);
 
