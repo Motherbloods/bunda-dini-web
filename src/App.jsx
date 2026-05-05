@@ -1,25 +1,46 @@
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { ROUTES } from "./constants/routes";
+import { Suspense, lazy } from "react";
 
 // Auth
-import LoginPage from "./pages/auth/LoginPage";
+const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
 
-import KaderHomePage from "./pages/kader/KaderHomePage";
-import AddPatientPage from "./pages/kader/AddPatientPage";
-import PatientDetailPage from "./pages/kader/PatientDetailPage";
-import EditPatientPage from "./pages/kader/EditPatientPage";
+// Kader
+const KaderHomePage = lazy(() => import("./pages/kader/KaderHomePage"));
+const AddPatientPage = lazy(() => import("./pages/kader/AddPatientPage"));
+const PatientDetailPage = lazy(() => import("./pages/kader/PatientDetailPage"));
+const EditPatientPage = lazy(() => import("./pages/kader/EditPatientPage"));
 
-import ExaminationPage from "./pages/kader/examination/ExaminationPage";
-import ExaminationResultPage from "./pages/kader/examination/ExaminationResultPage";
-import ExaminationHistoryPage from "./pages/kader/examination/ExaminationHistoryPage";
+const ExaminationPage = lazy(
+  () => import("./pages/kader/examination/ExaminationPage"),
+);
+const ExaminationResultPage = lazy(
+  () => import("./pages/kader/examination/ExaminationResultPage"),
+);
+const ExaminationHistoryPage = lazy(
+  () => import("./pages/kader/examination/ExaminationHistoryPage"),
+);
 
-import BidanDashboardPage from "./pages/bidan/BidanDashboardPage";
-import KaderListPage from "./pages/bidan/KaderListPage";
-import AddKaderPage from "./pages/bidan/AddKaderPage";
-import AllPatientsPage from "./pages/bidan/AllPatientsPage";
-import PatientDetailBidanPage from "./pages/bidan/PatientDetailBidanPage";
-import ExportPage from "./pages/bidan/ExportPage";
+// Bidan
+const BidanDashboardPage = lazy(
+  () => import("./pages/bidan/BidanDashboardPage"),
+);
+const KaderListPage = lazy(() => import("./pages/bidan/KaderListPage"));
+const AddKaderPage = lazy(() => import("./pages/bidan/AddKaderPage"));
+const AllPatientsPage = lazy(() => import("./pages/bidan/AllPatientsPage"));
+const PatientDetailBidanPage = lazy(
+  () => import("./pages/bidan/PatientDetailBidanPage"),
+);
+const ExportPage = lazy(() => import("./pages/bidan/ExportPage"));
+
+function LoadingScreen() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent" />
+    </div>
+  );
+}
 
 function ProtectedRoute({ children, allowedRoles }) {
   const { currentUser, status } = useAuth();
@@ -117,134 +138,136 @@ export default function App() {
   };
 
   return (
-    <Routes>
-      <Route
-        path={ROUTES.LOGIN}
-        element={
-          <PublicRoute>
-            <LoginPage />
-          </PublicRoute>
-        }
-      />
+    <Suspense fallback={<LoadingScreen />}>
+      <Routes>
+        <Route
+          path={ROUTES.LOGIN}
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
+        />
 
-      <Route
-        path={ROUTES.KADER_HOME}
-        element={
-          <ProtectedRoute allowedRoles={["kader"]}>
-            <KaderHomePage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path={ROUTES.KADER_HOME}
+          element={
+            <ProtectedRoute allowedRoles={["kader"]}>
+              <KaderHomePage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path={ROUTES.ADD_PATIENT}
-        element={
-          <ProtectedRoute allowedRoles={["kader"]}>
-            <AddPatientPage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path={ROUTES.ADD_PATIENT}
+          element={
+            <ProtectedRoute allowedRoles={["kader"]}>
+              <AddPatientPage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path={ROUTES.PATIENT_DETAIL}
-        element={
-          <ProtectedRoute allowedRoles={["kader"]}>
-            <PatientDetailPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={ROUTES.EDIT_PATIENT}
-        element={
-          <ProtectedRoute allowedRoles={["kader"]}>
-            <EditPatientPage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path={ROUTES.PATIENT_DETAIL}
+          element={
+            <ProtectedRoute allowedRoles={["kader"]}>
+              <PatientDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.EDIT_PATIENT}
+          element={
+            <ProtectedRoute allowedRoles={["kader"]}>
+              <EditPatientPage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path={ROUTES.EXAMINE}
-        element={
-          <ProtectedRoute allowedRoles={["kader"]}>
-            <ExaminationPage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path={ROUTES.EXAMINE}
+          element={
+            <ProtectedRoute allowedRoles={["kader"]}>
+              <ExaminationPage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path={ROUTES.EXAM_HISTORY}
-        element={
-          <ProtectedRoute allowedRoles={["kader"]}>
-            <ExaminationHistoryPage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path={ROUTES.EXAM_HISTORY}
+          element={
+            <ProtectedRoute allowedRoles={["kader", "bidan"]}>
+              <ExaminationHistoryPage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path={ROUTES.EXAM_RESULT}
-        element={
-          <ProtectedRoute allowedRoles={["kader", "bidan"]}>
-            <ExaminationResultPage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path={ROUTES.EXAM_RESULT}
+          element={
+            <ProtectedRoute allowedRoles={["kader", "bidan"]}>
+              <ExaminationResultPage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path={ROUTES.BIDAN_DASHBOARD}
-        element={
-          <ProtectedRoute allowedRoles={["bidan"]}>
-            <BidanDashboardPage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path={ROUTES.BIDAN_DASHBOARD}
+          element={
+            <ProtectedRoute allowedRoles={["bidan"]}>
+              <BidanDashboardPage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path={ROUTES.KADER_LIST}
-        element={
-          <ProtectedRoute allowedRoles={["bidan"]}>
-            <KaderListPage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path={ROUTES.KADER_LIST}
+          element={
+            <ProtectedRoute allowedRoles={["bidan"]}>
+              <KaderListPage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path={ROUTES.ADD_KADER}
-        element={
-          <ProtectedRoute allowedRoles={["bidan"]}>
-            <AddKaderPage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path={ROUTES.ADD_KADER}
+          element={
+            <ProtectedRoute allowedRoles={["bidan"]}>
+              <AddKaderPage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path={ROUTES.ALL_PATIENTS}
-        element={
-          <ProtectedRoute allowedRoles={["bidan"]}>
-            <AllPatientsPage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path={ROUTES.ALL_PATIENTS}
+          element={
+            <ProtectedRoute allowedRoles={["bidan"]}>
+              <AllPatientsPage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path={ROUTES.PATIENT_DETAIL_BIDAN}
-        element={
-          <ProtectedRoute allowedRoles={["bidan"]}>
-            <PatientDetailBidanPage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path={ROUTES.PATIENT_DETAIL_BIDAN}
+          element={
+            <ProtectedRoute allowedRoles={["bidan"]}>
+              <PatientDetailBidanPage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path={ROUTES.EXPORT}
-        element={
-          <ProtectedRoute allowedRoles={["bidan"]}>
-            <ExportPage />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path={ROUTES.EXPORT}
+          element={
+            <ProtectedRoute allowedRoles={["bidan"]}>
+              <ExportPage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route path="/" element={<Navigate to={getHomeRoute()} replace />} />
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+        <Route path="/" element={<Navigate to={getHomeRoute()} replace />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </Suspense>
   );
 }
