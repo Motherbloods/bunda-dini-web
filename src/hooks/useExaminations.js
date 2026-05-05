@@ -120,6 +120,18 @@ export function useExaminations() {
 
   const fetchById = useCallback((id) => svc.fetchById(id), []);
 
+  const fetchByIdSecure = useCallback(async (id, currentUser) => {
+    setLoading(true);
+    try {
+      const data = await svc.fetchByIdSecure(id, currentUser);
+      return data;
+    } catch (e) {
+      throw new Error(e.message || "Gagal mengambil data pemeriksaan");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const trendBb = [...history].reverse().map((e) => e.beratBadan);
   const trendSistolik = [...history].reverse().map((e) => e.sistolik);
   const trendDiastolik = [...history].reverse().map((e) => e.diastolik);
@@ -137,6 +149,7 @@ export function useExaminations() {
     loadHistory,
     saveExamination,
     fetchById,
+    fetchByIdSecure, // TAMBAHKAN INI
     loadRules,
     trendBb,
     trendSistolik,
