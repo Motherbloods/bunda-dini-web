@@ -8,7 +8,11 @@ import PageLayout from "../../../components/layout/PageLayout";
 import Header from "../../../components/layout/Header";
 import Modal from "../../../components/ui/Modal";
 import { BlockButton } from "../../../components/ui/Button";
-import { usiaKehamilanMinggu } from "../../../utils/dateFormatter";
+import {
+  hplFormatted,
+  usiaKehamilanFormatted,
+  usiaKehamilanMinggu,
+} from "../../../utils/dateFormatter";
 import StepTensi from "./StepTensi";
 import StepAntropometri from "./StepAntropometri";
 import StepDjj from "./StepDjj";
@@ -154,21 +158,27 @@ export default function ExaminationPage() {
 
       {patient?.hpht &&
         (() => {
-          const hpht = patient.hpht?.toDate?.() ?? new Date(patient.hpht);
-          const usia = usiaKehamilanMinggu(hpht);
-          return usia !== null ? (
-            <div
-              className="mb-5 bg-primary-pale border border-primary/20 rounded-xl
-                          px-4 py-2.5 flex items-center gap-2"
-            >
-              <span className="text-primary text-lg">🤰</span>
-              <span className="text-primary font-semibold text-sm">
-                Usia kehamilan: {usia} minggu
-              </span>
+          const hphtDate = patient.hpht?.toDate?.() ?? new Date(patient.hpht);
+          const usia = usiaKehamilanFormatted(hphtDate);
+          const hpl = hplFormatted(hphtDate);
+          if (!usia) return null;
+          return (
+            <div className="mb-5 bg-primary-pale border border-primary/20 rounded-xl px-4 py-3">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-primary text-lg">🤰</span>
+                <span className="text-primary font-semibold text-sm">
+                  Usia kehamilan: {usia}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-primary text-base">📅</span>
+                <span className="text-primary text-sm">
+                  HPL: <span className="font-semibold">{hpl}</span>
+                </span>
+              </div>
             </div>
-          ) : null;
+          );
         })()}
-
       <StepIndicator steps={STEPS} current={step} />
 
       <div className="mt-6 max-w-lg mx-auto">

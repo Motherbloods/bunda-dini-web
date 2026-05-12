@@ -10,7 +10,7 @@ import Badge from "../../components/ui/Badge";
 import EmptyState from "../../components/ui/EmptyState";
 import { InlineLoader } from "../../components/ui/LoadingSpinner";
 import { ClickablePhoto } from "../../components/shared/PhotoViewer";
-import { toDisplay, usiaKehamilanMinggu } from "../../utils/dateFormatter";
+import { toDisplay, usiaKehamilanFormatted } from "../../utils/dateFormatter";
 import { buildPath, ROUTES } from "../../constants/routes";
 import { Users } from "lucide-react";
 
@@ -126,7 +126,6 @@ export default function AllPatientsPage() {
               {displayed.map((p, i) => {
                 const hpht =
                   p.hpht?.toDate?.() ?? (p.hpht ? new Date(p.hpht) : null);
-                const usia = usiaKehamilanMinggu(hpht);
                 return (
                   <tr
                     key={p.id}
@@ -154,9 +153,9 @@ export default function AllPatientsPage() {
                       {hpht ? (
                         <>
                           <p>{toDisplay(hpht)}</p>
-                          {usia !== null && (
+                          {usiaKehamilanFormatted(hpht) && (
                             <p className="text-xs text-primary font-medium">
-                              {usia} minggu
+                              {usiaKehamilanFormatted(hpht)}
                             </p>
                           )}
                         </>

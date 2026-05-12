@@ -12,8 +12,8 @@ import { InlineLoader } from "../../components/ui/LoadingSpinner";
 import {
   toDisplay,
   ageFromDate,
-  usiaKehamilanMinggu,
-  taksiranPersalinan,
+  usiaKehamilanFormatted,
+  hplFormatted,
 } from "../../utils/dateFormatter";
 import { buildPath, ROUTES } from "../../constants/routes";
 import toast from "react-hot-toast";
@@ -62,9 +62,6 @@ export default function PatientDetailBidanPage() {
 
   const hpht =
     patient.hpht?.toDate?.() ?? (patient.hpht ? new Date(patient.hpht) : null);
-  const usia = usiaKehamilanMinggu(hpht);
-  const taksiran = taksiranPersalinan(hpht);
-  const isSelesai = patient.status === "selesai";
 
   // Kelompokkan riwayat per kader
   const grouped = history.reduce((acc, e) => {
@@ -108,16 +105,23 @@ export default function PatientDetailBidanPage() {
             </div>
           </Card>
 
-          {hpht && (
+          {hpht ? (
             <Card className="p-5">
               <SectionHeader title="Data Kehamilan" />
               <InfoRow label="HPHT" value={toDisplay(hpht)} />
-              <InfoRow label="Taksiran" value={toDisplay(taksiran)} />
               <InfoRow
                 label="Usia Kehamilan"
-                value={`${usia} minggu`}
+                value={usiaKehamilanFormatted(hpht) ?? "-"}
                 highlight
               />
+              <InfoRow label="HPL" value={hplFormatted(hpht) ?? "-"} />
+            </Card>
+          ) : (
+            <Card className="p-5">
+              <SectionHeader title="Data Kehamilan" />
+              <div className="py-3 text-center">
+                <p className="text-sm text-gray-400 italic">HPHT belum diisi</p>
+              </div>
             </Card>
           )}
 

@@ -8,7 +8,10 @@ import Header from "../../components/layout/Header";
 import Input, { Select } from "../../components/ui/Input";
 import { BlockButton } from "../../components/ui/Button";
 import { InlineLoader } from "../../components/ui/LoadingSpinner";
-import { usiaKehamilanMinggu, toDisplay } from "../../utils/dateFormatter";
+import {
+  usiaKehamilanFormatted,
+  hplFormatted,
+} from "../../utils/dateFormatter";
 import * as V from "../../utils/validators";
 import toast from "react-hot-toast";
 import { ROUTES } from "../../constants/routes";
@@ -101,10 +104,6 @@ export default function EditPatientPage() {
         <InlineLoader />
       </PageLayout>
     );
-
-  const usiaFromHpht = hphtValue
-    ? usiaKehamilanMinggu(new Date(hphtValue))
-    : null;
 
   return (
     <PageLayout>
@@ -220,15 +219,31 @@ export default function EditPatientPage() {
           <div className="bg-white rounded-2xl border border-gray-100 p-6">
             <h3 className="font-bold text-gray-900 mb-4">Data Kehamilan</h3>
             <Input label="HPHT — Opsional" type="date" {...register("hpht")} />
-            {usiaFromHpht !== null && (
-              <p className="mt-1.5 text-sm text-primary font-medium">
-                Usia kehamilan: {usiaFromHpht} minggu
-              </p>
-            )}
-            {!hphtValue && (
+            {hphtValue ? (
+              (() => {
+                const usia = usiaKehamilanFormatted(new Date(hphtValue));
+                const hpl = hplFormatted(new Date(hphtValue));
+                if (!usia) return null;
+                return (
+                  <div className="mt-2 p-3 bg-primary-pale rounded-xl space-y-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-primary text-base">🤰</span>
+                      <p className="text-sm font-semibold text-primary">
+                        Usia kehamilan: {usia}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-primary text-base">📅</span>
+                      <p className="text-sm text-primary">
+                        HPL: <span className="font-semibold">{hpl}</span>
+                      </p>
+                    </div>
+                  </div>
+                );
+              })()
+            ) : (
               <p className="mt-1.5 text-xs text-gray-400 italic">
-                Isi HPHT agar taksiran persalinan dan usia kehamilan dapat
-                dihitung.
+                Isi HPHT agar usia kehamilan dan HPL dapat dihitung.
               </p>
             )}
           </div>

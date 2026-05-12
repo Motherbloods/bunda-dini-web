@@ -48,3 +48,22 @@ export function ageFromDate(tglLahir) {
   if (!tglLahir) return "-";
   return `${differenceInYears(new Date(), new Date(tglLahir))} tahun`;
 }
+
+export function usiaKehamilanFormatted(hpht) {
+  if (!hpht) return null;
+  const date = hpht?.toDate?.() ?? new Date(hpht);
+  const diff = differenceInDays(new Date(), date);
+  const minggu = Math.floor(diff / 7);
+  const bulan = Math.floor(minggu / 4.33);
+
+  if (minggu <= 0) return null;
+  if (bulan <= 0) return `${minggu} minggu`;
+  return `${minggu} minggu (${bulan} bulan)`;
+}
+
+export function hplFormatted(hpht) {
+  if (!hpht) return null;
+  const date = hpht?.toDate?.() ?? new Date(hpht);
+  const hpl = addDays(date, 280);
+  return format(hpl, "dd MMMM yyyy (EEEE)", { locale: id });
+}
