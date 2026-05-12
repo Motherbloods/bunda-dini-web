@@ -14,6 +14,7 @@ import { kategoriBmi } from "../../../utils/ruleEngine";
 import { generatePdf } from "../../../utils/pdfGenerator";
 import { ROUTES } from "../../../constants/routes";
 import toast from "react-hot-toast";
+import CatatanBidanEditor from "../../../components/shared/CatatanBidanEditor";
 
 export default function ExaminationResultPage() {
   const { examId } = useParams();
@@ -173,12 +174,6 @@ export default function ExaminationResultPage() {
               </div>
             </div>
           )}
-          {exam.catatanKader && (
-            <div className="mt-3">
-              <p className="text-xs text-gray-400 mb-1">Catatan Kader</p>
-              <p className="text-sm text-gray-700">{exam.catatanKader}</p>
-            </div>
-          )}
         </Card>
 
         <Card
@@ -214,6 +209,7 @@ export default function ExaminationResultPage() {
               ))}
             </div>
           </div>
+          {exam && <CatatanBidanEditor exam={exam} readOnly={!isBidan} />}
         </Card>
       </div>
 

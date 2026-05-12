@@ -18,6 +18,7 @@ import {
   hplFormatted,
 } from "../../utils/dateFormatter";
 import toast from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
 
 export default function PatientDetailPage() {
   const { patientId } = useParams();
@@ -26,6 +27,8 @@ export default function PatientDetailPage() {
   const { loadHistory, history, loading: examLoading } = useExaminations();
   const [confirmSelesai, setConfirmSelesai] = useState(false);
   const [doingSelesai, setDoingSelesai] = useState(false);
+
+  const { isBidan } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -165,13 +168,16 @@ export default function PatientDetailPage() {
         <div className="lg:col-span-2 space-y-5">
           {!isSelesai && (
             <div className="flex gap-3">
-              <button
-                onClick={() => navigate(`/kader/patients/${patientId}/examine`)}
-                className="flex-1 flex items-center justify-center gap-2 bg-primary text-white
-                           py-3.5 rounded-xl font-semibold hover:bg-primary-dark transition-colors"
-              >
-                <Stethoscope size={20} /> Periksa Sekarang
-              </button>
+              {!isBidan && (
+                <button
+                  onClick={() =>
+                    navigate(`/kader/patients/${patientId}/examine`)
+                  }
+                  className="flex-1 flex items-center justify-center gap-2 bg-primary ..."
+                >
+                  <Stethoscope size={20} /> Periksa Sekarang
+                </button>
+              )}
               <button
                 onClick={() => navigate(`/kader/patients/${patientId}/history`)}
                 className="flex items-center justify-center gap-2 border-2 border-primary text-primary

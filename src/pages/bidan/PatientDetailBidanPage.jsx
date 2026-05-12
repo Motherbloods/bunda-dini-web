@@ -77,15 +77,14 @@ export default function PatientDetailBidanPage() {
         title={patient.nama}
         backTo={-1}
         action={
-          <div className="flex gap-2">
-            <button
-              onClick={() => navigate(buildPath.examHistory(patientId))}
-              className="flex items-center gap-1.5 border-2 border-primary text-primary
-                         rounded-xl px-4 py-2.5 text-sm font-semibold hover:bg-primary-pale transition-colors"
-            >
-              <History size={16} /> Riwayat & Grafik
-            </button>
-          </div>
+          <button
+            onClick={() => navigate(buildPath.examHistory(patientId))}
+            className="flex items-center gap-1.5 border-2 border-primary text-primary
+                   rounded-xl px-4 py-2.5 text-sm font-semibold
+                   hover:bg-primary-pale transition-colors"
+          >
+            <History size={16} /> Riwayat & Grafik
+          </button>
         }
       />
 

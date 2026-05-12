@@ -3,7 +3,8 @@ import * as svc from "../services/examinationService";
 import * as rSvc from "../services/ruleService";
 import { evaluate, hitungBmi } from "../utils/ruleEngine";
 import toast from "react-hot-toast";
-
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase/config";
 export function useExaminations() {
   const [history, setHistory] = useState([]);
   const [lastSaved, setLastSaved] = useState(null);
@@ -121,6 +122,22 @@ export function useExaminations() {
     [loadRules],
   );
 
+  const saveCatatanBidan = useCallback(async (examId, catatan) => {
+    try {
+      await updateDoc(doc(db, "examinations", examId), {
+        catatanBidan: catatan,
+      });
+      setHistory((prev) =>
+        prev.map((e) =>
+          e.id === examId ? { ...e, catatanBidan: catatan } : e,
+        ),
+      );
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
+
   const fetchById = useCallback((id) => svc.fetchById(id), []);
 
   const fetchByIdSecure = useCallback(async (id, currentUser) => {
@@ -151,6 +168,7 @@ export function useExaminations() {
     rulesLoaded,
     loadHistory,
     saveExamination,
+    saveCatatanBidan,
     fetchById,
     fetchByIdSecure, // TAMBAHKAN INI
     loadRules,
