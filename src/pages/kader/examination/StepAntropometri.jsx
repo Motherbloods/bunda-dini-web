@@ -11,6 +11,9 @@ export default function StepAntropometri({
   onLila,
   lingkarPerut,
   onLp,
+  tfu,
+  onTfu,
+  usiaKehamilanMinggu,
   errors,
   patientId,
 }) {
@@ -139,6 +142,50 @@ export default function StepAntropometri({
           className="w-full border border-gray-200 rounded-xl px-4 py-3 text-base bg-white
             focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
         />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-600 mb-1.5">
+          TFU / Tinggi Fundus Uteri (cm)
+          <span className="text-gray-400 font-normal"> — Opsional</span>
+        </label>
+        <input
+          type="number"
+          step="0.1"
+          value={tfu}
+          onChange={(e) => onTfu(e.target.value)}
+          placeholder="contoh: 28"
+          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-base bg-white
+                   focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+        />
+        {tfu &&
+          (() => {
+            const tfuVal = parseFloat(tfu);
+            const minggu = usiaKehamilanMinggu
+              ? parseFloat(usiaKehamilanMinggu)
+              : null;
+            const normal = minggu ? `±${minggu} cm` : null;
+            const selisih = minggu ? Math.abs(tfuVal - minggu) : null;
+            const warning = selisih !== null && selisih > 3;
+
+            return (
+              <div
+                className={`mt-1.5 text-xs font-medium px-3 py-1.5 rounded-lg
+                ${
+                  warning
+                    ? "bg-warning-light text-warning"
+                    : "bg-success-light text-success"
+                }`}
+              >
+                {warning
+                  ? `⚠️ TFU ${tfuVal} cm — selisih ${selisih} cm dari normal`
+                  : `✅ TFU ${tfuVal} cm${normal ? ` — normal ${normal}` : ""}`}
+              </div>
+            );
+          })()}
+        <p className="text-xs text-gray-400 mt-1.5 italic">
+          Nilai normal: ±1 cm per minggu usia kehamilan (contoh: 28 minggu → ±28
+          cm)
+        </p>
       </div>
     </div>
   );

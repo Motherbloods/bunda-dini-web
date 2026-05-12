@@ -51,9 +51,10 @@ export function useExaminations() {
       tinggiBadan,
       lingkarLengan,
       lingkarPerut,
+      tfu,
       djj,
-      keluhanIbu,
-      catatanKader,
+      keluhanList,
+      keluhanLainnya,
     }) => {
       setLoading(true);
       try {
@@ -93,11 +94,13 @@ export function useExaminations() {
           tinggiBadan,
           lingkarLengan,
           lingkarPerut: lingkarPerut ?? null,
+          tfu: tfu ?? null,
           bmi: parseFloat(bmi.toFixed(2)),
           kenaikanBb: parseFloat(kenaikanBb.toFixed(2)),
           djj,
-          keluhanIbu: keluhanIbu || null,
-          catatanKader: catatanKader || null,
+          keluhanList: keluhanList ?? [],
+          keluhanLainnya: keluhanLainnya ?? null,
+          catatanBidan: null,
           statusIbu: result.statusIbu,
           statusJanin: result.statusJanin,
           rekomendasi: result.rekomendasi,

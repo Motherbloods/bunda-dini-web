@@ -43,10 +43,11 @@ export default function ExaminationPage() {
     tinggiBadan: "",
     lingkarLengan: "",
     lingkarPerut: "",
+    tfu: "",
     // Step 3 — DJJ
     djj: "",
-    keluhanIbu: "",
-    catatanKader: "",
+    selectedKeluhan: [],
+    keluhanLainnya: "",
   });
   const [errors, setErrors] = useState({});
 
@@ -138,9 +139,10 @@ export default function ExaminationPage() {
       tinggiBadan: parseFloat(form.tinggiBadan),
       lingkarLengan: parseFloat(form.lingkarLengan),
       lingkarPerut: form.lingkarPerut ? parseFloat(form.lingkarPerut) : null,
+      tfu: form.tfu ? parseFloat(form.tfu) : null, // ← TAMBAH
       djj: parseInt(form.djj),
-      keluhanIbu: form.keluhanIbu || null,
-      catatanKader: form.catatanKader || null,
+      keluhanList: form.selectedKeluhan, // ← GANTI
+      keluhanLainnya: form.keluhanLainnya || null,
     });
 
     if (saved) {
@@ -201,6 +203,15 @@ export default function ExaminationPage() {
             onLila={(v) => update("lingkarLengan", v)}
             lingkarPerut={form.lingkarPerut}
             onLp={(v) => update("lingkarPerut", v)}
+            tfu={form.tfu}
+            onTfu={(v) => update("tfu", v)}
+            usiaKehamilanMinggu={
+              patient?.hpht
+                ? (usiaKehamilanMinggu(
+                    patient.hpht?.toDate?.() ?? new Date(patient.hpht),
+                  ) ?? undefined)
+                : undefined
+            }
             errors={errors}
             patientId={patientId}
           />
@@ -209,10 +220,10 @@ export default function ExaminationPage() {
           <StepDjj
             djj={form.djj}
             onDjj={(v) => update("djj", v)}
-            keluhanIbu={form.keluhanIbu}
-            onKeluhan={(v) => update("keluhanIbu", v)}
-            catatanKader={form.catatanKader}
-            onCatatan={(v) => update("catatanKader", v)}
+            selectedKeluhan={form.selectedKeluhan}
+            onKeluhanChange={(list) => update("selectedKeluhan", list)}
+            keluhanLainnya={form.keluhanLainnya}
+            onKeluhanLainnya={(v) => update("keluhanLainnya", v)}
             errors={errors}
           />
         )}

@@ -133,6 +133,7 @@ export default function ExaminationResultPage() {
             {exam.lingkarPerut && (
               <Row label="Lingkar Perut" value={`${exam.lingkarPerut} cm`} />
             )}
+            {exam.tfu && <Row label="TFU" value={`${exam.tfu} cm`} />}
           </div>
         </Card>
 
@@ -145,10 +146,31 @@ export default function ExaminationResultPage() {
             </div>
             <Badge status={exam.statusJanin} size="md" />
           </div>
-          {exam.keluhanIbu && (
+          {(exam.keluhanList?.length > 0 || exam.keluhanLainnya) && (
             <div className="mt-4 pt-4 border-t border-gray-100">
-              <p className="text-xs text-gray-400 mb-1">Keluhan Ibu</p>
-              <p className="text-sm text-gray-700">{exam.keluhanIbu}</p>
+              <p className="text-xs text-gray-400 mb-2">
+                Keluhan Ibu ({exam.keluhanList?.length ?? 0} dipilih)
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {exam.keluhanList?.map((k) => (
+                  <span
+                    key={k}
+                    className="text-xs bg-warning-light text-warning border
+                               border-orange-200 px-2.5 py-1 rounded-full font-medium"
+                  >
+                    {k}
+                  </span>
+                ))}
+                {exam.keluhanLainnya && (
+                  <span
+                    className="text-xs bg-warning-light text-warning border
+                                 border-orange-200 px-2.5 py-1 rounded-full
+                                 font-medium italic"
+                  >
+                    Lainnya: {exam.keluhanLainnya}
+                  </span>
+                )}
+              </div>
             </div>
           )}
           {exam.catatanKader && (
