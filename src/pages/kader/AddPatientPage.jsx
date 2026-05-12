@@ -183,9 +183,11 @@ export default function AddPatientPage() {
             <Input
               label="Tanggal Lahir *"
               type="date"
+              max={new Date().toISOString().split("T")[0]}
               error={errors.tanggalLahir?.message}
               {...register("tanggalLahir", {
                 required: "Tanggal lahir wajib diisi",
+                validate: V.notFutureDate("Tanggal lahir"),
               })}
             />
             <Input
@@ -236,8 +238,11 @@ export default function AddPatientPage() {
               <Input
                 label="HPHT — Opsional"
                 type="date"
+                max={new Date().toISOString().split("T")[0]}
                 error={errors.hpht?.message}
-                {...register("hpht")}
+                {...register("hpht", {
+                  validate: V.notFutureDate("HPHT"),
+                })}
               />
               {hphtValue &&
                 (() => {

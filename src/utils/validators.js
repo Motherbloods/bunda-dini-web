@@ -45,6 +45,19 @@ export const floatRange = (min, max, label) => (v) => {
   if (n < min || n > max) return `${label} harus antara ${min}–${max}`;
   return true;
 };
+export const notFutureDate =
+  (label = "Tanggal") =>
+  (value) => {
+    if (!value) return true;
+
+    const selected = new Date(value);
+    const today = new Date();
+
+    selected.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    return selected <= today || `${label} tidak boleh lebih dari hari ini`;
+  };
 
 // Shortcut untuk form pemeriksaan
 export const sistolik = intRange(60, 250, "Sistolik");
