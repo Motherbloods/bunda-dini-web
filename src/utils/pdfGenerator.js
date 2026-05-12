@@ -3,6 +3,209 @@ import autoTable from "jspdf-autotable";
 import { toDisplay, toDisplayWithDay } from "./dateFormatter";
 import { kategoriBmi } from "./ruleEngine";
 
+export async function generateRekapPdf({
+  exams,
+  patMap,
+  namaPuskesmas = "PUSKESMAS",
+  bidanNama = "",
+  from,
+  to,
+}) {
+  const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+
+  const RED = [198, 40, 40];
+  const GREY = [117, 117, 117];
+  const DARK = [33, 33, 33];
+  const LIGHT = [245, 245, 245];
+  const WHITE = [255, 255, 255];
+
+  // HEADER
+  doc.setFillColor(...RED);
+  doc.rect(0, 0, 297, 30, "F");
+  doc.setTextColor(...WHITE);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.text(namaPuskesmas.toUpperCase(), 148.5, 12, { align: "center" });
+  doc.setFontSize(10);
+  doc.text("REKAP PEMERIKSAAN IBU HAMIL", 148.5, 18, { align: "center" });
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.text(
+    `Periode: ${toDisplay(from)} s/d ${toDisplay(to)}   |   Tanggal Cetak: ${toDisplay(new Date())}`,
+    148.5,
+    24,
+    { align: "center" },
+  );
+
+  // TABEL REKAP
+  const headers = [
+    "No",
+    "Nama Ibu",
+    "NIK",
+    "Kader",
+    "Tanggal",
+    "Usia\nKehamilan\n(mgg)",
+    "TP",
+    "Sistolik\n(mmHg)",
+    "Diastolik\n(mmHg)",
+    "Status\nTensi",
+    "BB\n(kg)",
+    "LILA\n(cm)",
+    "BMI",
+    "DJJ\n(bpm)",
+    "Status Ibu",
+    "Status\nJanin",
+  ];
+
+  const tableData = exams.map((e, i) => {
+    const p = patMap[e.patientId] ?? {};
+    const tanggal =
+      e.tanggal?.toDate?.() ?? new Date(e.tanggal?.seconds * 1000);
+    const hpht = p?.hpht?.toDate?.() ?? (p?.hpht ? new Date(p.hpht) : null);
+
+    let tpStr = "Belum diisi";
+    if (hpht) {
+      try {
+        const tp = new Date(hpht);
+        tp.setDate(tp.getDate() + 7);
+        tp.setMonth(tp.getMonth() - 3);
+        tp.setFullYear(tp.getFullYear() + 1);
+        tpStr = toDisplay(tp);
+      } catch (err) {
+        tpStr = "-";
+      }
+    }
+
+    const tensiStatus =
+      e.sistolik >= 140 || e.diastolik >= 90
+        ? "Hipertensi"
+        : e.sistolik < 90 || e.diastolik < 60
+          ? "Hipotensi"
+          : "Normal";
+
+    const statusIbu =
+      e.statusIbu === "risiko_tinggi"
+        ? "Risiko Tinggi"
+        : e.statusIbu === "perlu_perhatian"
+          ? "Perlu Perhatian"
+          : "Normal";
+
+    const statusJanin =
+      e.statusJanin === "djj_rendah"
+        ? "DJJ Rendah"
+        : e.statusJanin === "djj_tinggi"
+          ? "DJJ Tinggi"
+          : "Normal";
+
+    return [
+      i + 1,
+      p.nama ?? "-",
+      p.nik ?? "-",
+      e.kaderNama ?? "-",
+      toDisplay(tanggal),
+      e.usiaKehamilan ?? "-",
+      tpStr,
+      e.sistolik ?? "-",
+      e.diastolik ?? "-",
+      tensiStatus,
+      e.beratBadan?.toFixed(1) ?? "-",
+      e.lingkarLengan?.toFixed(1) ?? "-",
+      e.bmi?.toFixed(1) ?? "-",
+      e.djj ?? "-",
+      statusIbu,
+      statusJanin,
+    ];
+  });
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  const totalTableWidth =
+    8 +
+    25 +
+    20 +
+    20 +
+    18 +
+    12 +
+    18 +
+    12 +
+    12 +
+    16 +
+    10 +
+    10 +
+    10 +
+    10 +
+    20 +
+    18;
+
+  const leftMargin = (pageWidth - totalTableWidth) / 2;
+
+  autoTable(doc, {
+    startY: 35,
+    head: [headers],
+    body: tableData,
+    theme: "grid",
+    headStyles: {
+      fillColor: RED,
+      textColor: WHITE,
+      fontSize: 7,
+      fontStyle: "bold",
+      halign: "center",
+      valign: "middle",
+    },
+    styles: {
+      fontSize: 7,
+      cellPadding: 1.5,
+      textColor: DARK,
+      valign: "middle",
+    },
+    columnStyles: {
+      0: { halign: "center", cellWidth: 8 },
+      1: { halign: "left", cellWidth: 25 },
+      2: { halign: "left", cellWidth: 20 },
+      3: { halign: "left", cellWidth: 20 },
+      4: { halign: "center", cellWidth: 18 },
+      5: { halign: "center", cellWidth: 12 },
+      6: { halign: "center", cellWidth: 18 },
+      7: { halign: "center", cellWidth: 12 },
+      8: { halign: "center", cellWidth: 12 },
+      9: { halign: "center", cellWidth: 16 },
+      10: { halign: "center", cellWidth: 10 },
+      11: { halign: "center", cellWidth: 10 },
+      12: { halign: "center", cellWidth: 10 },
+      13: { halign: "center", cellWidth: 10 },
+      14: { halign: "center", cellWidth: 20 },
+      15: { halign: "center", cellWidth: 18 },
+    },
+    alternateRowStyles: { fillColor: LIGHT },
+    margin: { left: leftMargin },
+    tableWidth: totalTableWidth,
+  });
+
+  // FOOTER - Tanda tangan bidan
+  const finalY = doc.lastAutoTable.finalY + 15;
+  doc.setTextColor(...GREY);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.text("Mengetahui, Bidan Pendamping", 148.5, finalY, {
+    align: "center",
+  });
+  doc.setTextColor(...DARK);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setDrawColor(...DARK);
+  doc.line(120, finalY + 15, 177, finalY + 15);
+  doc.text(
+    bidanNama || "(................................)",
+    148.5,
+    finalY + 20,
+    { align: "center" },
+  );
+
+  doc.save(
+    `Rekap_BundaDini_${toDisplay(from).replace(/\//g, "-")}_sd_${toDisplay(to).replace(/\//g, "-")}.pdf`,
+  );
+}
+
 export async function generatePdf({ exam, patient, bidanNama = "" }) {
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
@@ -95,7 +298,7 @@ export async function generatePdf({ exam, patient, bidanNama = "" }) {
     ["BMI", `${exam.bmi?.toFixed(1)} — ${kategoriBmi(exam.bmi)}`],
     ["DJJ", `${exam.djj} bpm`],
     ["Keluhan Ibu", exam.keluhanIbu ?? "-"],
-    ["Catatan Kader", exam.catatanKader ?? "-"],
+    ["Catatan Bidan", exam.catatanBidan ?? "-"],
   ];
 
   autoTable(doc, {

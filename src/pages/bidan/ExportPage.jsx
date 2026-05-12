@@ -2,13 +2,12 @@ import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { fetchByDateRange } from "../../services/examinationService";
 import { fetchAll } from "../../services/patientService";
-import { generatePdf } from "../../utils/pdfGenerator";
+import { generatePdf, generateRekapPdf } from "../../utils/pdfGenerator";
 import PageLayout from "../../components/layout/PageLayout";
 import Header from "../../components/layout/Header";
 import Card, { SectionHeader } from "../../components/ui/Card";
 import { BlockButton } from "../../components/ui/Button";
 import { toDisplay, toFileStamp } from "../../utils/dateFormatter";
-import { kategoriBmi } from "../../utils/ruleEngine";
 import { FileDown, Table2, FileText } from "lucide-react";
 import * as XLSX from "xlsx";
 import toast from "react-hot-toast";
@@ -83,7 +82,7 @@ export default function ExportPage() {
           "Status Janin": e.statusJanin === "normal" ? "Normal" : e.statusJanin,
           Rekomendasi: e.rekomendasi?.join("; "),
           "Keluhan Ibu": e.keluhanIbu ?? "-",
-          "Catatan Kader": e.catatanKader ?? "-",
+          "Catatan Bidan": e.catatanBidan ?? "-",
         };
       });
 
@@ -121,14 +120,18 @@ export default function ExportPage() {
         toast.error("Tidak ada data di rentang tanggal ini.");
         return;
       }
-      // Generate PDF untuk pemeriksaan pertama sebagai contoh rekap
-      // Di produksi bisa dibuat halaman rekap khusus
-      await generatePdf({
-        exam: exams[0],
-        patient: patMap[exams[0].patientId],
+
+      // Generate PDF rekap untuk SEMUA pemeriksaan dalam range
+      await generateRekapPdf({
+        exams,
+        patMap,
+        namaPuskesmas: currentUser?.namaPuskesmas || "PUSKESMAS",
         bidanNama: currentUser?.nama ?? "",
+        from: new Date(from),
+        to: new Date(to),
       });
-      toast.success("PDF berhasil diunduh");
+
+      toast.success(`PDF rekap ${exams.length} pemeriksaan berhasil diunduh`);
     } catch (e) {
       toast.error("Gagal ekspor PDF: " + e.message);
     } finally {
@@ -233,10 +236,33 @@ export default function ExportPage() {
               <FileText size={24} className="text-danger" />
             </div>
             <div>
-              <p className="font-bold text-gray-900">Export PDF Laporan</p>
+              <p className="font-bold text-gray-900">Export PDF Rekap</p>
               <p className="text-sm text-gray-500 mt-0.5">
-                Laporan PDF siap cetak dengan ruang tanda tangan
+                Tabel rekap SEMUA pemeriksaan, siap cetak & tandatangan
               </p>
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {[
+                  "Nama Ibu",
+                  "NIK",
+                  "Tanggal",
+                  "Usia Kehamilan",
+                  "TP",
+                  "Tensi",
+                  "BB",
+                  "LILA",
+                  "BMI",
+                  "DJJ",
+                  "Status Ibu",
+                  "Status Janin",
+                ].map((c) => (
+                  <span
+                    key={c}
+                    className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md"
+                  >
+                    {c}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
           <button
@@ -251,7 +277,7 @@ export default function ExportPage() {
             ) : (
               <FileDown size={18} />
             )}
-            {loadingPdf ? "Membuat PDF..." : "Download PDF"}
+            {loadingPdf ? "Membuat PDF..." : "Download PDF Rekap"}
           </button>
         </Card>
       </div>
