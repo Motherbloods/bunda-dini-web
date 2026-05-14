@@ -53,6 +53,7 @@ export async function generateRekapPdf({
     "LILA\n(cm)",
     "BMI",
     "DJJ\n(bpm)",
+    "TFU\n(cm)",
     "Status Ibu",
     "Status\nJanin",
   ];
@@ -112,6 +113,7 @@ export async function generateRekapPdf({
       e.lingkarLengan?.toFixed(1) ?? "-",
       e.bmi?.toFixed(1) ?? "-",
       e.djj ?? "-",
+      e.tfu ?? "-",
       statusIbu,
       statusJanin,
     ];
@@ -130,6 +132,7 @@ export async function generateRekapPdf({
     12 +
     12 +
     16 +
+    10 +
     10 +
     10 +
     10 +
@@ -173,8 +176,9 @@ export async function generateRekapPdf({
       11: { halign: "center", cellWidth: 10 },
       12: { halign: "center", cellWidth: 10 },
       13: { halign: "center", cellWidth: 10 },
-      14: { halign: "center", cellWidth: 20 },
-      15: { halign: "center", cellWidth: 18 },
+      14: { halign: "center", cellWidth: 10 },
+      15: { halign: "center", cellWidth: 20 },
+      16: { halign: "center", cellWidth: 18 },
     },
     alternateRowStyles: { fillColor: LIGHT },
     margin: { left: leftMargin },

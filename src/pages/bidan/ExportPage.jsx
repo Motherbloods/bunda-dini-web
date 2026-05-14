@@ -67,6 +67,7 @@ export default function ExportPage() {
           BMI: e.bmi?.toFixed(1),
           "Status LILA": e.lingkarLengan < 23.5 ? "KEK" : "Normal",
           "DJJ (bpm)": e.djj,
+          "TFU (cm)": e.tfu,
           "Status DJJ":
             e.statusJanin === "djj_rendah"
               ? "DJJ Rendah"
@@ -200,6 +201,7 @@ export default function ExportPage() {
                   "LILA",
                   "BMI",
                   "DJJ",
+                  "TFU",
                   "Status Ibu",
                   "Rekomendasi",
                 ].map((c) => (
@@ -252,6 +254,7 @@ export default function ExportPage() {
                   "LILA",
                   "BMI",
                   "DJJ",
+                  "TFU",
                   "Status Ibu",
                   "Status Janin",
                 ].map((c) => (
