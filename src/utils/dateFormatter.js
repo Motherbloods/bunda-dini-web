@@ -1,4 +1,10 @@
-import { format, differenceInDays, addDays, differenceInYears } from "date-fns";
+import {
+  format,
+  differenceInDays,
+  addDays,
+  startOfDay,
+  differenceInYears,
+} from "date-fns";
 import { id } from "date-fns/locale";
 
 export function toDisplay(date) {
@@ -63,7 +69,26 @@ export function usiaKehamilanFormatted(hpht) {
 
 export function hplFormatted(hpht) {
   if (!hpht) return null;
-  const date = hpht?.toDate?.() ?? new Date(hpht);
+
+  // support Firestore Timestamp atau Date biasa
+  let rawDate;
+
+  if (typeof hpht?.toDate === "function") {
+    rawDate = hpht.toDate();
+  } else if (typeof hpht === "string") {
+    // aman untuk input type="date"
+    const [y, m, d] = hpht.split("-");
+    rawDate = new Date(y, m - 1, d);
+  } else {
+    rawDate = new Date(hpht);
+  }
+
+  const date = startOfDay(rawDate);
+
+  // HPL = HPHT + 280 hari
   const hpl = addDays(date, 280);
-  return format(hpl, "dd MMMM yyyy (EEEE)", { locale: id });
+
+  return format(hpl, "dd MMMM yyyy (EEEE)", {
+    locale: id,
+  });
 }
