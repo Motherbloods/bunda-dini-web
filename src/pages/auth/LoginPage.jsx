@@ -56,27 +56,35 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left Side - Form */}
       <div className="flex-1 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md">
-          {/* Logo */}
           <div className="text-center mb-8">
-            <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="w-20 h-20 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+                <img
+                  src="/images/logo.jpg"
+                  alt="Logo Bunda Dini"
+                  className="w-10 h-10 object-contain"
+                />
+              </div>
+              <div className="w-px h-12 bg-gray-200" />
               <img
-                src="/images/logo.jpg"
-                alt="Logo"
-                className="w-10 h-10 object-contain"
+                src="/images/kemendiktisaintek.png"
+                alt="Kemendiktisaintek"
+                className="h-14 object-contain flex-shrink-0"
               />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Bunda Dini
             </h1>
             <p className="text-gray-500">Sistem Monitoring Ibu Hamil</p>
+            <p className="text-xs text-gray-400 mt-1">
+              Program Pengabdian kepada Masyarakat — Hibah Kemendiktisaintek
+              Tahun 2026
+            </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Error message */}
             {errorMsg && (
               <div className="bg-danger-light border border-red-200 rounded-xl p-3 flex items-start gap-2">
                 <span className="text-danger text-lg leading-none">⚠</span>
@@ -84,7 +92,6 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1.5">
                 Email
@@ -111,7 +118,6 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1.5">
                 Kata Sandi
@@ -148,7 +154,6 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
@@ -163,7 +168,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Footer */}
           <div className="mt-8 text-center text-sm text-gray-500">
             <p>Hanya untuk petugas kesehatan terdaftar</p>
             <p className="mt-2">
@@ -171,10 +175,21 @@ export default function LoginPage() {
               <span className="text-primary font-semibold">Administrator</span>
             </p>
           </div>
+
+          <div className="mt-6 flex lg:hidden items-center justify-center gap-2 text-gray-400">
+            <span className="text-xs">Didukung oleh</span>
+            <img
+              src="/images/kemendiktisaintek.png"
+              alt="Kemendiktisaintek"
+              className="h-4 object-contain"
+            />
+            <span className="text-xs font-semibold text-gray-500">
+              Kemendiktisaintek
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Right Side - Illustration */}
       <div className="hidden lg:flex flex-1 bg-gradient-to-br from-primary to-primary-dark p-12 items-center justify-center">
         <div className="text-white text-center max-w-lg">
           <h2 className="text-4xl font-bold mb-6">
@@ -185,20 +200,23 @@ export default function LoginPage() {
             kesehatan ibu hamil secara real-time dengan sistem deteksi dini
             risiko kehamilan.
           </p>
-          {/* <div className="grid grid-cols-3 gap-6 mt-12">
-            <div className="text-center">
-              <div className="text-4xl font-bold mb-2">100+</div>
-              <div className="text-sm text-white/80">Ibu Terpantau</div>
+
+          <div className="mx-auto max-w-md flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl px-6 py-4 border border-white/20">
+            <img
+              src="/images/kemendiktisaintek.png"
+              alt="Kemendiktisaintek"
+              className="h-12 w-12 object-contain bg-white rounded-xl p-1.5 flex-shrink-0"
+            />
+            <div className="text-left">
+              <p className="text-sm font-semibold text-white">
+                Didanai oleh Hibah Kemendiktisaintek Tahun 2026
+              </p>
+              <p className="text-xs text-white/70 mt-0.5">
+                Program Pengabdian kepada Masyarakat, Universitas Duta Bangsa
+                (UDB) Surakarta
+              </p>
             </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold mb-2">20+</div>
-              <div className="text-sm text-white/80">Kader Aktif</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold mb-2">500+</div>
-              <div className="text-sm text-white/80">Pemeriksaan</div>
-            </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

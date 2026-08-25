@@ -68,6 +68,13 @@ export default function Sidebar() {
           />
         </div>
         {(!collapsed || mobile) && (
+          <img
+            src="/images/kemendiktisaintek.png"
+            alt="Kemendiktisaintek"
+            className="w-7 h-7 object-contain flex-shrink-0"
+          />
+        )}
+        {(!collapsed || mobile) && (
           <div className="min-w-0">
             <p className="font-bold text-gray-900 text-sm leading-tight">
               Bunda Dini
@@ -176,6 +183,17 @@ export default function Sidebar() {
           <LogOut size={18} className="flex-shrink-0" />
           {(!collapsed || mobile) && <span>Keluar</span>}
         </button>
+
+        {(!collapsed || mobile) && (
+          <div className="flex items-center justify-center gap-1.5 mt-3 pt-3 border-t border-gray-100 text-gray-400">
+            <span className="text-[10px]">Didukung oleh</span>
+            <img
+              src="/images/kemendiktisaintek.png"
+              alt="Kemendiktisaintek"
+              className="h-3 object-contain"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
