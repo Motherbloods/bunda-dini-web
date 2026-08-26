@@ -59,46 +59,103 @@ export default function Sidebar() {
 
   const SidebarContent = ({ mobile = false }) => (
     <div className="flex flex-col h-full">
-      <div className="flex items-center gap-3 px-4 py-5 border-b border-gray-100">
-        <div className="w-9 h-9  rounded-xl flex items-center justify-center flex-shrink-0">
-          <img
-            src="/images/logo.jpg"
-            alt="Logo"
-            className="w-10 h-10 object-contain"
-          />
-        </div>
-        {(!collapsed || mobile) && (
-          <img
-            src="/images/kemendiktisaintek.png"
-            alt="Kemendiktisaintek"
-            className="w-7 h-7 object-contain flex-shrink-0"
-          />
-        )}
-        {(!collapsed || mobile) && (
-          <div className="min-w-0">
-            <p className="font-bold text-gray-900 text-sm leading-tight">
-              Bunda Dini
-            </p>
-            <p className="text-xs text-gray-400 truncate">
-              {isBidan ? "Dashboard Bidan" : "Dashboard Kader"}
-            </p>
+      <div className="flex flex-col gap-3 px-4 py-5 border-b border-gray-100">
+        {mobile ? (
+          <>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3 min-w-0">
+                <img
+                  src="/images/logo.jpg"
+                  alt="Logo Bunda Dini"
+                  className="w-9 h-9 object-contain rounded-lg flex-shrink-0"
+                />
+                <div className="min-w-0">
+                  <p className="font-bold text-gray-900 text-sm leading-tight">
+                    Bunda Dini
+                  </p>
+                  <p className="text-xs text-gray-400 truncate">
+                    {isBidan ? "Dashboard Bidan" : "Dashboard Kader"}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setMobileOpen(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="flex items-center gap-2 pt-1">
+              <span className="text-[10px] text-gray-400">Didukung oleh</span>
+              <div className="flex items-center gap-2">
+                <img
+                  src="/images/tutwuri.webp"
+                  alt="Tut Wuri Handayani"
+                  className="h-3.5 object-contain"
+                />
+                <img
+                  src="/images/kemendiktisaintek.png"
+                  alt="Kemendiktisaintek"
+                  className="h-3.5 object-contain"
+                />
+                <img
+                  src="/images/udb.jpg"
+                  alt="Universitas Duta Bangsa"
+                  className="h-3.5 object-contain"
+                />
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0">
+                <img
+                  src="/images/logo.jpg"
+                  alt="Logo"
+                  className="w-10 h-10 object-contain"
+                />
+              </div>
+              {!collapsed && (
+                <div className="min-w-0">
+                  <p className="font-bold text-gray-900 text-sm leading-tight">
+                    Bunda Dini
+                  </p>
+                  <p className="text-xs text-gray-400 truncate">
+                    {isBidan ? "Dashboard Bidan" : "Dashboard Kader"}
+                  </p>
+                </div>
+              )}
+              <button
+                onClick={() => setCollapsed(!collapsed)}
+                className="ml-auto text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
+              >
+                {collapsed ? <ChevronRight size={18} /> : <Menu size={18} />}
+              </button>
+            </div>
+            {!collapsed && (
+              <div className="flex items-center gap-2 pl-1">
+                <span className="text-[10px] text-gray-400">Didukung oleh</span>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/images/tutwuri.webp"
+                    alt="Tut Wuri Handayani"
+                    className="h-3 object-contain"
+                  />
+                  <img
+                    src="/images/kemendiktisaintek.png"
+                    alt="Kemendiktisaintek"
+                    className="h-3 object-contain"
+                  />
+                  <img
+                    src="/images/udb.jpg"
+                    alt="Universitas Duta Bangsa"
+                    className="h-3 object-contain"
+                  />
+                </div>
+              </div>
+            )}
           </div>
-        )}
-        {!mobile && (
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="ml-auto text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
-          >
-            {collapsed ? <ChevronRight size={18} /> : <Menu size={18} />}
-          </button>
-        )}
-        {mobile && (
-          <button
-            onClick={() => setMobileOpen(false)}
-            className="ml-auto text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X size={20} />
-          </button>
         )}
       </div>
 
@@ -183,17 +240,6 @@ export default function Sidebar() {
           <LogOut size={18} className="flex-shrink-0" />
           {(!collapsed || mobile) && <span>Keluar</span>}
         </button>
-
-        {(!collapsed || mobile) && (
-          <div className="flex items-center justify-center gap-1.5 mt-3 pt-3 border-t border-gray-100 text-gray-400">
-            <span className="text-[10px]">Didukung oleh</span>
-            <img
-              src="/images/kemendiktisaintek.png"
-              alt="Kemendiktisaintek"
-              className="h-3 object-contain"
-            />
-          </div>
-        )}
       </div>
     </div>
   );

@@ -59,20 +59,36 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <div className="w-20 h-20 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
+              <div className="w-16 h-16 bg-white rounded-2xl shadow-md border border-gray-100 flex items-center justify-center p-2 flex-shrink-0">
                 <img
                   src="/images/logo.jpg"
                   alt="Logo Bunda Dini"
-                  className="w-10 h-10 object-contain"
+                  className="w-full h-full object-contain"
                 />
               </div>
-              <div className="w-px h-12 bg-gray-200" />
-              <img
-                src="/images/kemendiktisaintek.png"
-                alt="Kemendiktisaintek"
-                className="h-14 object-contain flex-shrink-0"
-              />
+              <div className="w-px h-10 bg-gray-200 flex-shrink-0" />
+              <div className="w-16 h-16 bg-white rounded-2xl shadow-md border border-gray-100 flex items-center justify-center p-2 flex-shrink-0">
+                <img
+                  src="/images/tutwuri.webp"
+                  alt="Tut Wuri Handayani"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="w-16 h-16 bg-white rounded-2xl shadow-md border border-gray-100 flex items-center justify-center p-2 flex-shrink-0">
+                <img
+                  src="/images/kemendiktisaintek.png"
+                  alt="Kemendiktisaintek"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="w-16 h-16 bg-white rounded-2xl shadow-md border border-gray-100 flex items-center justify-center p-2 flex-shrink-0">
+                <img
+                  src="/images/udb.jpg"
+                  alt="Universitas Duta Bangsa"
+                  className="w-full h-full object-contain"
+                />
+              </div>
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Bunda Dini
@@ -176,16 +192,25 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <div className="mt-6 flex lg:hidden items-center justify-center gap-2 text-gray-400">
+          <div className="mt-6 flex lg:hidden flex-col items-center gap-2 text-gray-400">
             <span className="text-xs">Didukung oleh</span>
-            <img
-              src="/images/kemendiktisaintek.png"
-              alt="Kemendiktisaintek"
-              className="h-4 object-contain"
-            />
-            <span className="text-xs font-semibold text-gray-500">
-              Kemendiktisaintek
-            </span>
+            <div className="flex items-center gap-4">
+              <img
+                src="/images/tutwuri.webp"
+                alt="Tut Wuri Handayani"
+                className="h-5 object-contain"
+              />
+              <img
+                src="/images/kemendiktisaintek.png"
+                alt="Kemendiktisaintek"
+                className="h-5 object-contain"
+              />
+              <img
+                src="/images/udb.jpg"
+                alt="Universitas Duta Bangsa"
+                className="h-5 object-contain"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -202,11 +227,23 @@ export default function LoginPage() {
           </p>
 
           <div className="mx-auto max-w-md flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl px-6 py-4 border border-white/20">
-            <img
-              src="/images/kemendiktisaintek.png"
-              alt="Kemendiktisaintek"
-              className="h-12 w-12 object-contain bg-white rounded-xl p-1.5 flex-shrink-0"
-            />
+            <div className="flex items-center gap-3 bg-white rounded-xl p-2 flex-shrink-0">
+              <img
+                src="/images/tutwuri.webp"
+                alt="Tut Wuri Handayani"
+                className="h-9 object-contain"
+              />
+              <img
+                src="/images/kemendiktisaintek.png"
+                alt="Kemendiktisaintek"
+                className="h-9 object-contain"
+              />
+              <img
+                src="/images/udb.jpg"
+                alt="Universitas Duta Bangsa"
+                className="h-9 object-contain"
+              />
+            </div>
             <div className="text-left">
               <p className="text-sm font-semibold text-white">
                 Didanai oleh Hibah Kemendiktisaintek Tahun 2026
